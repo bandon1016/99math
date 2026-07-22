@@ -135,13 +135,18 @@
                 <span id="bgmText" class="hidden sm:inline">音樂: 關</span>
             </button>
 
+            <button onclick="openVolumeModal()" class="btn-3d px-2.5 py-1.5 md:px-3 md:py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg md:rounded-xl font-bold flex items-center space-x-1 border border-indigo-300">
+                <i class="fas fa-sliders-h text-xs md:text-sm"></i>
+                <span>音量</span>
+            </button>
+
             <button onclick="openDiaryModal()" class="btn-3d px-2.5 py-1.5 md:px-3.5 md:py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg md:rounded-xl font-bold flex items-center space-x-1 border border-amber-300">
                 <i class="fas fa-book-open text-yellow-200 text-xs md:text-sm"></i>
                 <span>挑戰日記</span>
             </button>
 
             <button onclick="showSetupScreen()" class="btn-3d px-2.5 py-1.5 md:px-3 md:py-2 bg-sky-500 hover:bg-sky-600 text-white rounded-lg md:rounded-xl font-bold flex items-center space-x-1 border border-sky-300">
-                <i class="fas fa-sliders-h text-xs md:text-sm"></i>
+                <i class="fas fa-gamepad text-xs md:text-sm"></i>
                 <span class="hidden sm:inline">設定</span>
             </button>
         </div>
@@ -382,6 +387,53 @@
         </div>
     </div>
 
+    <!-- 5. 音量設定 Modal -->
+    <div id="volumeModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-5 md:p-6 max-w-sm w-full shadow-2xl border-4 border-indigo-400 animate-pop relative">
+            <div class="flex justify-between items-center pb-2 border-b-2 border-indigo-100 mb-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-indigo-500 text-white rounded-xl flex items-center justify-center font-bold">
+                        <i class="fas fa-volume-up text-xs"></i>
+                    </div>
+                    <h3 class="text-lg font-black text-gray-800">音量調整設定</h3>
+                </div>
+                <button onclick="closeVolumeModal()" class="w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold flex items-center justify-center text-xs">
+                    ✕
+                </button>
+            </div>
+
+            <div class="space-y-4 my-2">
+                <!-- 背景音樂音量條 -->
+                <div class="bg-purple-50 p-3 rounded-2xl border border-purple-200">
+                    <div class="flex justify-between items-center mb-1.5">
+                        <label class="text-xs font-black text-purple-900 flex items-center">
+                            <i class="fas fa-music mr-1.5 text-purple-600"></i> 背景音樂音量
+                        </label>
+                        <span id="bgmVolText" class="text-xs font-black text-purple-700">25%</span>
+                    </div>
+                    <input type="range" id="bgmVolRange" min="0" max="1" step="0.05" value="0.25" oninput="changeBgmVolume(this.value)" class="w-full accent-purple-500 h-2 bg-purple-200 rounded-lg appearance-none cursor-pointer">
+                </div>
+
+                <!-- 讀題語音與音效音量條 -->
+                <div class="bg-amber-50 p-3 rounded-2xl border border-amber-200">
+                    <div class="flex justify-between items-center mb-1.5">
+                        <label class="text-xs font-black text-amber-900 flex items-center">
+                            <i class="fas fa-volume-up mr-1.5 text-amber-600"></i> 讀題語音與按鈕音效
+                        </label>
+                        <span id="sfxVolText" class="text-xs font-black text-amber-700">80%</span>
+                    </div>
+                    <input type="range" id="sfxVolRange" min="0" max="1" step="0.05" value="0.8" oninput="changeSfxVolume(this.value)" class="w-full accent-amber-500 h-2 bg-amber-200 rounded-lg appearance-none cursor-pointer">
+                </div>
+            </div>
+
+            <div class="mt-5 pt-2 border-t border-gray-100">
+                <button onclick="closeVolumeModal()" class="btn-3d w-full py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-black rounded-xl text-sm border-2 border-indigo-300">
+                    確定
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         /* 遊戲核心狀態 */
         let selectedTables = [2, 3, 4, 5, 6, 7, 8, 9];
@@ -398,7 +450,10 @@
         let roundQuestions = [];
         let roundWrongQuestions = [];
 
-        /* Web Audio API 與 音訊處理 */
+        /* Web Audio API 與 音量控制變數 */
+        let bgmVolume = 0.25; // 預設背景音樂降低至 25%
+        let sfxVolume = 0.8;  // 預設語音與音效為 80%
+
         let audioCtx = null;
         let isBgmPlaying = false;
         let bgmSynthTimer = null;
@@ -415,6 +470,10 @@
             updateSelectedTablesUI();
             loadHistoryAndRenderDiary();
 
+            // 初始化背景音樂預設音量
+            const bgmAudio = document.getElementById('bgmAudio');
+            if (bgmAudio) bgmAudio.volume = bgmVolume;
+
             const unlockAudio = () => {
                 initAudioContext();
                 if ('speechSynthesis' in window && window.speechSynthesis.paused) {
@@ -427,23 +486,26 @@
             document.addEventListener('pointerdown', unlockAudio, { once: true });
         });
 
-        function updateSelectedTablesUI() {
-            const checkboxes = document.querySelectorAll('.table-checkbox');
-            selectedTables = [];
-            checkboxes.forEach(cb => {
-                const label = cb.parentElement;
-                const checkIcon = label.querySelector('.check-icon');
-                if (cb.checked) {
-                    selectedTables.push(parseInt(cb.value));
-                    label.classList.add('border-amber-400', 'bg-amber-100');
-                    label.classList.remove('border-amber-200', 'bg-amber-50');
-                    if (checkIcon) checkIcon.classList.remove('opacity-0');
-                } else {
-                    label.classList.remove('border-amber-400', 'bg-amber-100');
-                    label.classList.add('border-amber-200', 'bg-amber-50');
-                    if (checkIcon) checkIcon.classList.add('opacity-0');
-                }
-            });
+        function openVolumeModal() {
+            document.getElementById('volumeModal').classList.remove('hidden');
+        }
+
+        function closeVolumeModal() {
+            document.getElementById('volumeModal').classList.add('hidden');
+        }
+
+        function changeBgmVolume(val) {
+            bgmVolume = parseFloat(val);
+            document.getElementById('bgmVolText').innerText = Math.round(bgmVolume * 100) + '%';
+            const bgmAudio = document.getElementById('bgmAudio');
+            if (bgmAudio) {
+                bgmAudio.volume = bgmVolume;
+            }
+        }
+
+        function changeSfxVolume(val) {
+            sfxVolume = parseFloat(val);
+            document.getElementById('sfxVolText').innerText = Math.round(sfxVolume * 100) + '%';
         }
 
         function selectAllTables(selectAll) {
@@ -515,6 +577,7 @@
                 utterance.lang = 'zh-TW';
                 utterance.rate = 1.1;
                 utterance.pitch = 1.2;
+                utterance.volume = sfxVolume; // 讀題語音音量
                 window.speechSynthesis.speak(utterance);
             }
         }
@@ -748,7 +811,7 @@
                 const gain = audioCtx.createGain();
                 osc.type = type || 'sine';
                 osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.15 * sfxVolume, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
@@ -769,7 +832,7 @@
                 osc.frequency.setValueAtTime(783.99, now + 0.16);
                 osc.frequency.setValueAtTime(1046.50, now + 0.24);
 
-                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.setValueAtTime(0.2 * sfxVolume, now);
                 gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
 
                 osc.connect(gain);
@@ -789,7 +852,7 @@
                 osc.frequency.setValueAtTime(220, now);
                 osc.frequency.setValueAtTime(180, now + 0.15);
 
-                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.setValueAtTime(0.15 * sfxVolume, now);
                 gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
 
                 osc.connect(gain);
@@ -813,6 +876,8 @@
                 bgmBtn.classList.replace('hover:bg-purple-600', 'hover:bg-emerald-600');
                 bgmIcon.className = "fas fa-volume-up animate-pulse";
                 bgmText.innerText = "音樂: 開";
+
+                bgmAudio.volume = bgmVolume; // 設定目前滑桿指定之音量
 
                 // 嘗試播放本地 bgm.mp3 檔案
                 bgmAudio.play().then(() => {
@@ -841,7 +906,7 @@
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(item.note, audioCtx.currentTime);
 
-                gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.04 * bgmVolume, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + item.dur);
 
                 osc.connect(gain);

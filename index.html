@@ -2,944 +2,477 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>歡樂遊樂園 - 99乘法表大冒險</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>99乘法表大冒險 - 歡樂遊樂園</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
-    
     <style>
-        body {
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap');
+        
+        * {
             font-family: 'Fredoka', 'Noto Sans TC', sans-serif;
             touch-action: manipulation;
             user-select: none;
             -webkit-user-select: none;
-            overflow-x: hidden;
         }
 
-        /* 摩天輪旋轉動畫 */
-        @keyframes spin-slow {
+        /* 旋轉摩天輪背景動畫 */
+        @keyframes rotateFerris {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
-        @keyframes spin-reverse {
-            from { transform: rotate(360deg); }
-            to { transform: rotate(0deg); }
-        }
         .ferris-wheel-spin {
-            animation: spin-slow 40s linear infinite;
-            transform-origin: center center;
+            animation: rotateFerris 40s linear infinite;
         }
-        .gondola-counter-spin {
-            animation: spin-reverse 40s linear infinite;
-            transform-origin: center center;
-        }
-
-        /* 飄浮雲朵 */
-        @keyframes float-cloud {
+        
+        @keyframes floatCloud {
             0% { transform: translateX(-10%); }
             50% { transform: translateX(10%); }
             100% { transform: translateX(-10%); }
         }
-        .animate-cloud {
-            animation: float-cloud 15s ease-in-out infinite;
+        .cloud-anim {
+            animation: floatCloud 12s ease-in-out infinite;
         }
 
-        /* 按鈕彈跳效果 */
-        .btn-bounce:active {
-            transform: scale(0.92);
+        @keyframes bouncePet {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-8px) scale(1.05); }
         }
-        
-        /* 浮雕立體按鈕樣式 */
-        .3d-btn {
-            box-shadow: 0 8px 0 rgba(0,0,0,0.15), inset 0 2px 0 rgba(255,255,255,0.4);
+        .bounce-pet {
+            animation: bouncePet 2s ease-in-out infinite;
+        }
+
+        .btn-press {
             transition: all 0.08s ease;
         }
-        .3d-btn:active {
-            box-shadow: 0 2px 0 rgba(0,0,0,0.15), inset 0 2px 0 rgba(255,255,255,0.4);
-            transform: translateY(6px);
+        .btn-press:active {
+            transform: translateY(4px) scale(0.95);
+            box-shadow: 0 1px 0 #b58a00 !important;
         }
 
-        /* 自訂彈窗動畫 */
-        @keyframes pop-in {
-            0% { transform: scale(0.7); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+        ::-webkit-scrollbar {
+            width: 6px;
         }
-        .animate-pop {
-            animation: pop-in 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 10px;
         }
-
-        /* 遊戲專用隱藏滾動條 */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+        ::-webkit-scrollbar-thumb {
+            background: #f59e0b;
+            border-radius: 10px;
         }
     </style>
 </head>
-<body class="bg-gradient-to-b from-sky-300 via-sky-200 to-amber-100 min-h-screen flex flex-col justify-between relative overflow-x-hidden overflow-y-auto md:overflow-hidden select-none">
+<body class="bg-sky-200 min-h-screen overflow-x-hidden overflow-y-auto flex flex-col justify-between relative text-slate-800">
 
-    <!-- 動態遊樂園背景圖層 (摩天輪、城堡、雲朵) -->
+    <!-- 背景動態遊樂園元素 -->
     <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <!-- 白雲背景 -->
-        <svg class="absolute top-4 left-10 w-32 md:w-48 text-white/80 animate-cloud" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/>
-        </svg>
-        <svg class="absolute top-12 right-20 w-40 md:w-64 text-white/70 animate-cloud" style="animation-delay: -5s;" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/>
-        </svg>
-
-        <!-- 摩天輪 (右下角大背景) -->
-        <div class="absolute -bottom-16 -right-16 opacity-35 md:opacity-50">
-            <svg width="450" height="450" viewBox="0 0 400 400" class="w-[320px] h-[320px] md:w-[500px] md:h-[500px]">
-                <!-- 底座支架 -->
-                <polygon points="200,200 130,380 270,380" fill="#F43F5E" />
-                <polygon points="200,200 150,380 250,380" fill="#FB7185" />
-                <!-- 旋轉輪體 -->
-                <g class="ferris-wheel-spin">
-                    <circle cx="200" cy="200" r="160" fill="none" stroke="#FBBF24" stroke-width="8" />
-                    <circle cx="200" cy="200" r="120" fill="none" stroke="#F59E0B" stroke-width="4" />
-                    <!-- 輪輻鋼索 -->
-                    <line x1="200" y1="40" x2="200" y2="360" stroke="#FBBF24" stroke-width="4" />
-                    <line x1="40" y1="200" x2="360" y2="200" stroke="#FBBF24" stroke-width="4" />
-                    <line x1="87" y1="87" x2="313" y2="313" stroke="#FBBF24" stroke-width="4" />
-                    <line x1="87" y1="313" x2="313" y2="87" stroke="#FBBF24" stroke-width="4" />
-                    
-                    <!-- 車廂 (點綴8個) -->
-                    <!-- 車廂1 (0度) -->
-                    <g transform="translate(200, 40)"><g class="gondola-counter-spin"><rect x="-15" y="0" width="30" height="26" rx="6" fill="#EF4444"/><circle cx="0" cy="-5" r="4" fill="#F59E0B"/></g></g>
-                    <!-- 車廂2 (45度) -->
-                    <g transform="translate(313, 87)"><g class="gondola-counter-spin"><rect x="-15" y="0" width="30" height="26" rx="6" fill="#3B82F6"/><circle cx="0" cy="-5" r="4" fill="#F59E0B"/></g></g>
-                    <!-- 車廂3 (90度) -->
-                    <g transform="translate(360, 200)"><g class="gondola-counter-spin"><rect x="-15" y="0" width="30" height="26" rx="6" fill="#10B981"/><circle cx="0" cy="-5" r="4" fill="#F59E0B"/></g></g>
-                    <!-- 車廂4 (135度) -->
-                    <g transform="translate(313, 313)"><g class="gondola-counter-spin"><rect x="-15" y="0" width="30" height="26" rx="6" fill="#EC4899"/><circle cx="0" cy="-5" r="4" fill="#F59E0B"/></g></g>
-                    <!-- 車廂5 (180度) -->
-                    <g transform="translate(200, 360)"><g class="gondola-counter-spin"><rect x="-15" y="0" width="30" height="26" rx="6" fill="#8B5CF6"/><circle cx="0" cy="-5" r="4" fill="#F59E0B"/></g></g>
-                    <!-- 車廂6 (225度) -->
-                    <g transform="translate(87, 313)"><g class="gondola-counter-spin"><rect x="-15" y="0" width="30" height="26" rx="6" fill="#F59E0B"/><circle cx="0" cy="-5" r="4" fill="#F59E0B"/></g></g>
-                    <!-- 車廂7 (270度) -->
-                    <g transform="translate(40, 200)"><g class="gondola-counter-spin"><rect x="-15" y="0" width="30" height="26" rx="6" fill="#06B6D4"/><circle cx="0" cy="-5" r="4" fill="#F59E0B"/></g></g>
-                    <!-- 車廂8 (315度) -->
-                    <g transform="translate(87, 87)"><g class="gondola-counter-spin"><rect x="-15" y="0" width="30" height="26" rx="6" fill="#84CC16"/><circle cx="0" cy="-5" r="4" fill="#F59E0B"/></g></g>
-                </g>
-                <!-- 中心軸心 -->
-                <circle cx="200" cy="200" r="22" fill="#E11D48" />
-                <circle cx="200" cy="200" r="10" fill="#FEF08A" />
-            </svg>
+        <div class="absolute inset-0 bg-gradient-to-b from-sky-300 via-sky-200 to-amber-100"></div>
+        
+        <div class="absolute top-3 left-5 text-white/80 text-6xl cloud-anim"><i class="fa-solid fa-cloud"></i></div>
+        <div class="absolute top-10 right-16 text-white/70 text-8xl cloud-anim" style="animation-delay: -4s;"><i class="fa-solid fa-cloud"></i></div>
+        
+        <!-- 摩天輪 (輪廓結構) -->
+        <div class="absolute -bottom-10 -right-10 md:right-5 w-72 h-72 md:w-96 md:h-96 opacity-30 md:opacity-40">
+            <div class="w-full h-full relative ferris-wheel-spin">
+                <div class="absolute inset-0 border-8 border-dashed border-pink-500 rounded-full"></div>
+                <div class="absolute inset-4 border-4 border-amber-400 rounded-full"></div>
+                <div class="absolute top-1/2 left-0 right-0 h-1 bg-pink-400"></div>
+                <div class="absolute top-0 bottom-0 left-1/2 w-1 bg-pink-400"></div>
+                <div class="absolute top-1/2 left-2 text-pink-600 text-xl"><i class="fa-solid fa-circle"></i></div>
+                <div class="absolute top-1/2 right-2 text-yellow-500 text-xl"><i class="fa-solid fa-circle"></i></div>
+                <div class="absolute top-2 left-1/2 text-cyan-500 text-xl"><i class="fa-solid fa-circle"></i></div>
+                <div class="absolute bottom-2 left-1/2 text-purple-500 text-xl"><i class="fa-solid fa-circle"></i></div>
+            </div>
+            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[40px] border-l-transparent border-r-[40px] border-r-transparent border-b-[80px] border-b-pink-400/50"></div>
         </div>
 
-        <!-- 山丘底層 -->
-        <div class="absolute bottom-0 inset-x-0 h-16 md:h-24 bg-emerald-400 rounded-t-[50%] scale-x-125 z-0 opacity-80"></div>
-        <div class="absolute bottom-0 inset-x-0 h-12 md:h-16 bg-emerald-500 rounded-t-[40%] scale-x-110 z-0"></div>
+        <div class="absolute bottom-0 left-2 opacity-20 text-red-400 text-9xl">
+            <i class="fa-solid fa-campground"></i>
+        </div>
     </div>
 
-    <!-- 頂部列：標題與功能功能鍵 (音樂、學習日記、設定) -->
-    <header class="relative z-10 px-3 py-1.5 md:px-6 md:py-2 flex items-center justify-between bg-white/80 backdrop-blur-md border-b-2 md:border-b-4 border-yellow-400 shadow-sm shrink-0">
-        <!-- Logo / 標題 -->
-        <div class="flex items-center space-x-2 md:space-x-3">
-            <div class="w-8 h-8 md:w-11 md:h-11 bg-gradient-to-tr from-pink-500 to-amber-400 rounded-xl md:rounded-2xl flex items-center justify-center text-white text-base md:text-2xl shadow-md transform -rotate-6">
-                🎡
-            </div>
-            <div>
-                <h1 class="text-base md:text-2xl font-black text-amber-900 tracking-wide leading-tight">乘法表遊樂園</h1>
-                <p class="text-[10px] md:text-xs text-amber-700 hidden sm:block">快樂學習 9×9 數學大冒險</p>
-            </div>
+    <!-- 頂部導覽區 -->
+    <header class="relative z-10 w-full max-w-6xl mx-auto px-3 pt-2 pb-1 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+            <span class="bg-amber-400 text-amber-900 font-black px-3 py-1 rounded-full text-sm md:text-lg shadow-md flex items-center gap-1">
+                <i class="fa-solid fa-ferris-wheel text-pink-600"></i> 99乘法遊樂園
+            </span>
         </div>
 
-        <!-- 右側按鈕群 -->
-        <div class="flex items-center space-x-1.5 md:space-x-3 text-xs md:text-base">
-            <!-- 背景音樂開關 -->
-            <button id="bgmToggleBtn" onclick="toggleBGM()" class="3d-btn px-2.5 py-1.5 md:px-3 md:py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg md:rounded-xl font-bold flex items-center space-x-1 border border-purple-300">
-                <i id="bgmIcon" class="fas fa-music text-xs md:text-sm"></i>
-                <span id="bgmText" class="hidden sm:inline">音樂: 關</span>
+        <div class="flex gap-2">
+            <button id="bgmBtn" onclick="toggleBGM()" class="bg-pink-500 hover:bg-pink-600 active:scale-95 text-white font-bold text-xs md:text-sm px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5 transition">
+                <i id="bgmIcon" class="fa-solid fa-music"></i> <span id="bgmText">音樂: 開</span>
             </button>
-
-            <!-- 學習日記按鈕 -->
-            <button onclick="openDiaryModal()" class="3d-btn px-2.5 py-1.5 md:px-3.5 md:py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg md:rounded-xl font-bold flex items-center space-x-1 border border-amber-300">
-                <i class="fas fa-book-open text-yellow-200 text-xs md:text-sm"></i>
-                <span>挑戰日記</span>
+            <button onclick="openSelectModal()" class="bg-sky-500 hover:bg-sky-600 active:scale-95 text-white font-bold text-xs md:text-sm px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-sliders"></i> 選擇乘法表
             </button>
-
-            <!-- 重新選關按鈕 -->
-            <button onclick="showSetupScreen()" class="3d-btn px-2.5 py-1.5 md:px-3 md:py-2 bg-sky-500 hover:bg-sky-600 text-white rounded-lg md:rounded-xl font-bold flex items-center space-x-1 border border-sky-300">
-                <i class="fas fa-sliders-h text-xs md:text-sm"></i>
-                <span class="hidden sm:inline">設定</span>
+            <button onclick="openDiaryModal()" class="bg-purple-500 hover:bg-purple-600 active:scale-95 text-white font-bold text-xs md:text-sm px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-book-open"></i> 挑戰日記
             </button>
         </div>
     </header>
 
-    <!-- 主要內容區 (橫向平板佈局優化) -->
-    <main class="relative z-10 flex-1 flex items-center justify-center p-2 sm:p-4 md:p-6 max-w-7xl mx-auto w-full my-auto">
+    <!-- 主要遊戲區域 -->
+    <main class="relative z-10 w-full max-w-5xl mx-auto px-2 py-1 flex-1 flex flex-col justify-center items-center">
+        <div class="w-full bg-white/90 backdrop-blur-md rounded-3xl p-3 md:p-5 shadow-2xl border-4 border-amber-300 flex flex-col md:flex-row gap-3 md:gap-6 items-stretch my-auto">
+            
+            <!-- 左側：題目區 -->
+            <div class="flex-1 bg-gradient-to-br from-amber-50 to-orange-100 rounded-2xl p-3 md:p-5 border-2 border-amber-200 flex flex-col justify-between items-center relative overflow-hidden shadow-inner">
+                <div class="w-full flex justify-between items-center mb-1">
+                    <span id="levelTag" class="bg-orange-500 text-white font-bold text-xs px-2.5 py-0.5 rounded-md shadow">隨機挑戰中</span>
+                    <div class="flex items-center gap-2 text-xs md:text-sm font-bold">
+                        <span class="text-emerald-600"><i class="fa-solid fa-circle-check"></i> <span id="scoreRight">0</span></span>
+                        <span class="text-rose-500"><i class="fa-solid fa-circle-xmark"></i> <span id="scoreWrong">0</span></span>
+                    </div>
+                </div>
 
-        <!-- ===== 1. 關卡選擇畫面 (Setup Screen) ===== -->
-        <div id="setupScreen" class="w-full max-w-3xl bg-white/90 backdrop-blur-md rounded-2xl md:rounded-3xl p-4 md:p-8 shadow-xl border-2 md:border-4 border-yellow-300 animate-pop my-auto">
-            <div class="text-center mb-4 md:mb-6">
-                <span class="px-3 py-1 bg-pink-100 text-pink-600 rounded-full font-bold text-xs tracking-wider">SELECT TABLE</span>
-                <h2 class="text-xl md:text-3xl font-black text-gray-800 mt-1.5">選擇今天想挑戰的乘法表！</h2>
-                <p class="text-gray-600 text-xs md:text-base mt-0.5">可勾選多個段數進行混合隨機出題！</p>
+                <div class="flex items-center gap-2 my-1 md:my-2 w-full justify-center">
+                    <div class="text-4xl md:text-6xl text-amber-500 bounce-pet drop-shadow">
+                        🐻
+                    </div>
+                    <div class="bg-white px-3 py-1.5 rounded-2xl border-2 border-amber-300 shadow text-slate-700 font-bold text-xs md:text-sm relative">
+                        <span id="petSpeech">算算看這題是多少吧！</span>
+                    </div>
+                </div>
+
+                <div class="bg-white/95 rounded-2xl p-3 md:p-4 w-full text-center border-4 border-amber-400 shadow-lg my-1">
+                    <div class="text-xs text-amber-600 font-bold mb-0.5">題目 (請填寫答案)</div>
+                    <div class="text-4xl md:text-6xl font-black text-amber-600 tracking-wider flex items-center justify-center gap-2">
+                        <span id="numA">3</span>
+                        <span class="text-pink-500">×</span>
+                        <span id="numB">6</span>
+                        <span class="text-slate-400">=</span>
+                        <span id="userAnswerDisplay" class="min-w-[1.8em] text-cyan-600 underline decoration-dashed decoration-amber-400 bg-amber-50 px-2 rounded">?</span>
+                    </div>
+                </div>
+
+                <div class="w-full flex justify-center mt-2">
+                    <button onclick="speakCurrentQuestion()" class="bg-amber-400 hover:bg-amber-500 active:scale-95 text-amber-950 font-bold text-xs px-4 py-1.5 rounded-full shadow flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-volume-high"></i> 讀題 (承以)
+                    </button>
+                </div>
             </div>
 
-            <!-- 段數選擇九宮格 (2 ~ 9) -->
-            <div class="grid grid-cols-4 gap-2 md:gap-4 mb-5 md:mb-8">
-                <!-- 2~9 數字勾選牌 -->
+            <!-- 右側：九宮格鍵盤 -->
+            <div class="flex-1 flex flex-col justify-between gap-2">
+                <div class="grid grid-cols-3 gap-2 flex-1">
+                    <button onclick="pressNum(1)" class="btn-press bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-2xl md:text-3xl rounded-2xl shadow-[0_4px_0_#d97706] py-2 md:py-3 border-2 border-amber-200">1</button>
+                    <button onclick="pressNum(2)" class="btn-press bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-2xl md:text-3xl rounded-2xl shadow-[0_4px_0_#d97706] py-2 md:py-3 border-2 border-amber-200">2</button>
+                    <button onclick="pressNum(3)" class="btn-press bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-2xl md:text-3xl rounded-2xl shadow-[0_4px_0_#d97706] py-2 md:py-3 border-2 border-amber-200">3</button>
+                    
+                    <button onclick="pressNum(4)" class="btn-press bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-2xl md:text-3xl rounded-2xl shadow-[0_4px_0_#d97706] py-2 md:py-3 border-2 border-amber-200">4</button>
+                    <button onclick="pressNum(5)" class="btn-press bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-2xl md:text-3xl rounded-2xl shadow-[0_4px_0_#d97706] py-2 md:py-3 border-2 border-amber-200">5</button>
+                    <button onclick="pressNum(6)" class="btn-press bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-2xl md:text-3xl rounded-2xl shadow-[0_4px_0_#d97706] py-2 md:py-3 border-2 border-amber-200">6</button>
+                    
+                    <button onclick="pressNum(7)" class="btn-press bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-2xl md:text-3xl rounded-2xl shadow-[0_4px_0_#d97706] py-2 md:py-3 border-2 border-amber-200">7</button>
+                    <button onclick="pressNum(8)" class="btn-press bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-2xl md:text-3xl rounded-2xl shadow-[0_4px_0_#d97706] py-2 md:py-3 border-2 border-amber-200">8</button>
+                    <button onclick="pressNum(9)" class="btn-press bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-2xl md:text-3xl rounded-2xl shadow-[0_4px_0_#d97706] py-2 md:py-3 border-2 border-amber-200">9</button>
+
+                    <button onclick="clearAnswer()" class="btn-press bg-slate-300 hover:bg-slate-200 text-slate-700 font-bold text-lg md:text-xl rounded-2xl shadow-[0_4px_0_#94a3b8] py-2 border-2 border-slate-100"><i class="fa-solid fa-delete-left"></i> 清除</button>
+                    <button onclick="pressNum(0)" class="btn-press bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-2xl md:text-3xl rounded-2xl shadow-[0_4px_0_#d97706] py-2 border-2 border-amber-200">0</button>
+                    <button onclick="submitAnswer()" class="btn-press bg-emerald-500 hover:bg-emerald-400 text-white font-black text-lg md:text-xl rounded-2xl shadow-[0_4px_0_#059669] py-2 border-2 border-emerald-300 flex items-center justify-center gap-1"><i class="fa-solid fa-paper-plane"></i> 送出</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 關卡選擇 Modal -->
+    <div id="selectModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-3 hidden">
+        <div class="bg-white rounded-3xl p-5 max-w-md w-full border-4 border-sky-300 shadow-2xl relative">
+            <h3 class="text-xl font-black text-sky-600 mb-3 text-center flex items-center justify-center gap-2">
+                <i class="fa-solid fa-list-check"></i> 選擇要練習的乘法表
+            </h3>
+            <div class="grid grid-cols-4 gap-2 mb-5">
                 <script>
-                    for(let i=2; i<=9; i++) {
+                    for(let i=2; i<=9; i++){
                         document.write(`
-                            <label class="relative flex flex-col items-center justify-center p-2.5 md:p-4 rounded-xl md:rounded-2xl border-2 md:border-4 border-amber-200 bg-amber-50 hover:bg-amber-100 cursor-pointer transition-all shadow-sm group select-none">
-                                <input type="checkbox" value="${i}" class="table-checkbox hidden" checked onchange="updateSelectedTablesUI()">
-                                <span class="number-badge text-2xl md:text-4xl font-black text-amber-800 group-hover:scale-110 transition-transform">${i}</span>
-                                <span class="text-[10px] md:text-xs font-bold text-amber-600 mt-0.5">${i} 的乘法</span>
-                                <div class="check-icon absolute top-1 right-1 md:top-2 md:right-2 w-4 h-4 md:w-6 md:h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] md:text-xs opacity-100 transition-opacity">
-                                    <i class="fas fa-check"></i>
-                                </div>
+                            <label class="flex flex-col items-center justify-center p-2 rounded-xl border-2 border-sky-100 bg-sky-50 cursor-pointer hover:bg-sky-100 transition">
+                                <input type="checkbox" value="${i}" class="num-checkbox w-5 h-5 accent-sky-500 mb-1" checked>
+                                <span class="font-black text-sky-800 text-base">${i} 段</span>
                             </label>
                         `);
                     }
                 </script>
             </div>
-
-            <!-- 全選 / 全不選 / 快速操作 -->
-            <div class="flex justify-between items-center mb-5 px-1 text-xs md:text-sm">
-                <div class="space-x-1.5">
-                    <button onclick="selectAllTables(true)" class="px-2.5 py-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-lg transition">全選</button>
-                    <button onclick="selectAllTables(false)" class="px-2.5 py-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold rounded-lg transition">清除</button>
-                </div>
-                <div class="font-bold text-amber-800">
-                    題數：
-                    <select id="questionCountSelect" class="bg-amber-100 border border-amber-300 rounded-lg px-2 py-0.5 font-bold text-amber-900 focus:outline-none">
-                        <option value="10">10 題</option>
-                        <option value="15" selected>15 題</option>
-                        <option value="20">20 題</option>
-                    </select>
-                </div>
+            <div class="flex gap-2">
+                <button onclick="selectAll(true)" class="flex-1 bg-slate-200 text-slate-700 py-2 rounded-xl font-bold text-xs">全選</button>
+                <button onclick="selectAll(false)" class="flex-1 bg-slate-200 text-slate-700 py-2 rounded-xl font-bold text-xs">全取消</button>
             </div>
-
-            <!-- 開始挑戰按鈕 -->
-            <button onclick="startGame()" class="3d-btn w-full py-3 md:py-4 bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white text-lg md:text-2xl font-black rounded-xl md:rounded-2xl border-2 md:border-4 border-emerald-200 shadow-lg flex items-center justify-center space-x-2">
-                <i class="fas fa-play text-yellow-300 text-base md:text-xl"></i>
-                <span>進入遊樂園開始挑戰！</span>
-            </button>
-        </div>
-
-
-        <!-- ===== 2. 橫向遊戲畫面 (Game View) ===== -->
-        <div id="gameScreen" class="hidden w-full grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-6 items-stretch my-auto">
-            
-            <!-- 左側：題目與吉祥物區 (md:col-span-6 或 7) -->
-            <div class="md:col-span-6 bg-white/90 backdrop-blur-md rounded-2xl md:rounded-3xl p-3.5 md:p-6 shadow-xl border-2 md:border-4 border-amber-300 flex flex-col justify-between min-h-[220px] sm:min-h-[280px] md:min-h-[360px] relative overflow-hidden">
-                
-                <!-- 遊戲狀態資訊 (進度、得分、連擊) -->
-                <div class="flex items-center justify-between border-b border-dashed border-amber-200 pb-2">
-                    <!-- 關卡進度條 -->
-                    <div class="flex-1 mr-3">
-                        <div class="flex justify-between text-xs font-bold text-amber-900 mb-1">
-                            <span id="progressText">題目：1 / 10</span>
-                            <span id="streakText" class="text-orange-500"><i class="fas fa-fire"></i> 連對 0</span>
-                        </div>
-                        <div class="w-full bg-amber-100 h-2.5 md:h-3.5 rounded-full overflow-hidden p-0.5 border border-amber-300">
-                            <div id="progressBar" class="bg-gradient-to-r from-amber-400 to-emerald-400 h-full rounded-full transition-all duration-300" style="width: 10%;"></div>
-                        </div>
-                    </div>
-
-                    <!-- 重複讀題按鈕 -->
-                    <button onclick="speakCurrentQuestion()" class="p-1.5 md:p-2 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded-lg md:rounded-xl transition font-bold text-xs flex items-center space-x-1" title="朗讀題目">
-                        <i class="fas fa-volume-up text-sm text-amber-600"></i>
-                        <span class="hidden sm:inline">讀題</span>
-                    </button>
-                </div>
-
-                <!-- 題目展示大看板 -->
-                <div class="my-auto py-3 md:py-6 text-center relative">
-                    <div id="mascotBadge" class="inline-block px-3 py-0.5 bg-yellow-200 text-amber-900 font-extrabold rounded-full text-[11px] md:text-sm mb-2 shadow-sm border border-yellow-300">
-                        🎡 加油！算出正確答案吧！
-                    </div>
-
-                    <!-- 算式顯眼區域 -->
-                    <div class="flex items-center justify-center space-x-2 md:space-x-4 text-3xl sm:text-4xl md:text-6xl font-black text-gray-800 tracking-wider">
-                        <span id="numA" class="text-indigo-600 bg-indigo-50 px-3 py-1 md:px-4 md:py-2 rounded-xl md:rounded-2xl border border-indigo-200 shadow-inner">7</span>
-                        <span class="text-pink-500">×</span>
-                        <span id="numB" class="text-indigo-600 bg-indigo-50 px-3 py-1 md:px-4 md:py-2 rounded-xl md:rounded-2xl border border-indigo-200 shadow-inner">8</span>
-                        <span class="text-pink-500">=</span>
-                        
-                        <!-- 答案填空框 -->
-                        <div id="answerDisplay" class="min-w-[70px] sm:min-w-[90px] md:min-w-[120px] h-12 sm:h-16 md:h-20 bg-amber-50 border-2 md:border-4 border-dashed border-amber-400 rounded-xl md:rounded-2xl flex items-center justify-center text-amber-900 font-black px-2 text-3xl sm:text-4xl md:text-5xl shadow-inner">
-                            <span id="userInputText" class="text-emerald-600">?</span>
-                        </div>
-                    </div>
-
-                    <!-- 正確/錯誤 動態提示浮層 -->
-                    <div id="feedbackOverlay" class="absolute inset-0 flex items-center justify-center bg-white/95 rounded-xl md:rounded-2xl opacity-0 pointer-events-none transition-opacity duration-200">
-                        <div id="feedbackContent" class="text-center transform scale-90 transition-transform duration-200">
-                            <!-- 動態填入圖示與文字 -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 底部吉祥物小語 -->
-                <div class="bg-amber-50 rounded-xl p-2 md:p-3 border border-amber-200 flex items-center space-x-2">
-                    <div class="text-xl md:text-3xl">🎠</div>
-                    <div class="text-[11px] md:text-xs text-amber-800 font-bold leading-tight">
-                        <p id="tipText">按右側數字鍵盤輸入答案，再按「送出」！</p>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- 右側：九宮格數字鍵盤區 (md:col-span-6) -->
-            <div class="md:col-span-6 bg-white/90 backdrop-blur-md rounded-2xl md:rounded-3xl p-3 md:p-5 shadow-xl border-2 md:border-4 border-pink-300 flex flex-col justify-center">
-                <!-- 3x4 九宮格數字盤 -->
-                <div class="grid grid-cols-3 gap-2 md:gap-3">
-                    <!-- 1 ~ 9 數字鍵 -->
-                    <button onclick="pressNum(1)" class="3d-btn h-12 sm:h-14 md:h-16 bg-gradient-to-b from-sky-100 to-sky-200 hover:from-sky-200 hover:to-sky-300 text-sky-900 text-xl sm:text-2xl md:text-3xl font-black rounded-xl md:rounded-2xl border border-sky-300">1</button>
-                    <button onclick="pressNum(2)" class="3d-btn h-12 sm:h-14 md:h-16 bg-gradient-to-b from-sky-100 to-sky-200 hover:from-sky-200 hover:to-sky-300 text-sky-900 text-xl sm:text-2xl md:text-3xl font-black rounded-xl md:rounded-2xl border border-sky-300">2</button>
-                    <button onclick="pressNum(3)" class="3d-btn h-12 sm:h-14 md:h-16 bg-gradient-to-b from-sky-100 to-sky-200 hover:from-sky-200 hover:to-sky-300 text-sky-900 text-xl sm:text-2xl md:text-3xl font-black rounded-xl md:rounded-2xl border border-sky-300">3</button>
-                    
-                    <button onclick="pressNum(4)" class="3d-btn h-12 sm:h-14 md:h-16 bg-gradient-to-b from-sky-100 to-sky-200 hover:from-sky-200 hover:to-sky-300 text-sky-900 text-xl sm:text-2xl md:text-3xl font-black rounded-xl md:rounded-2xl border border-sky-300">4</button>
-                    <button onclick="pressNum(5)" class="3d-btn h-12 sm:h-14 md:h-16 bg-gradient-to-b from-sky-100 to-sky-200 hover:from-sky-200 hover:to-sky-300 text-sky-900 text-xl sm:text-2xl md:text-3xl font-black rounded-xl md:rounded-2xl border border-sky-300">5</button>
-                    <button onclick="pressNum(6)" class="3d-btn h-12 sm:h-14 md:h-16 bg-gradient-to-b from-sky-100 to-sky-200 hover:from-sky-200 hover:to-sky-300 text-sky-900 text-xl sm:text-2xl md:text-3xl font-black rounded-xl md:rounded-2xl border border-sky-300">6</button>
-                    
-                    <button onclick="pressNum(7)" class="3d-btn h-12 sm:h-14 md:h-16 bg-gradient-to-b from-sky-100 to-sky-200 hover:from-sky-200 hover:to-sky-300 text-sky-900 text-xl sm:text-2xl md:text-3xl font-black rounded-xl md:rounded-2xl border border-sky-300">7</button>
-                    <button onclick="pressNum(8)" class="3d-btn h-12 sm:h-14 md:h-16 bg-gradient-to-b from-sky-100 to-sky-200 hover:from-sky-200 hover:to-sky-300 text-sky-900 text-xl sm:text-2xl md:text-3xl font-black rounded-xl md:rounded-2xl border border-sky-300">8</button>
-                    <button onclick="pressNum(9)" class="3d-btn h-12 sm:h-14 md:h-16 bg-gradient-to-b from-sky-100 to-sky-200 hover:from-sky-200 hover:to-sky-300 text-sky-900 text-xl sm:text-2xl md:text-3xl font-black rounded-xl md:rounded-2xl border border-sky-300">9</button>
-                    
-                    <!-- 倒數第一排：退格 / 0 / 送出 -->
-                    <button onclick="pressDelete()" class="3d-btn h-12 sm:h-14 md:h-16 bg-gradient-to-b from-rose-100 to-rose-200 hover:from-rose-200 hover:to-rose-300 text-rose-700 text-lg md:text-xl font-black rounded-xl md:rounded-2xl border border-rose-300 flex items-center justify-center">
-                        <i class="fas fa-backspace"></i>
-                    </button>
-                    <button onclick="pressNum(0)" class="3d-btn h-12 sm:h-14 md:h-16 bg-gradient-to-b from-sky-100 to-sky-200 hover:from-sky-200 hover:to-sky-300 text-sky-900 text-xl sm:text-2xl md:text-3xl font-black rounded-xl md:rounded-2xl border border-sky-300">0</button>
-                    <button onclick="submitAnswer()" class="3d-btn h-12 sm:h-14 md:h-16 bg-gradient-to-b from-emerald-400 to-emerald-500 hover:from-emerald-500 hover:to-emerald-600 text-white text-lg sm:text-xl md:text-2xl font-black rounded-xl md:rounded-2xl border border-emerald-300 flex items-center justify-center space-x-1">
-                        <span>送出</span>
-                        <i class="fas fa-check-circle text-base md:text-lg"></i>
-                    </button>
-                </div>
-            </div>
-
-        </div>
-    </main>
-
-
-    <!-- ===== 3. 挑戰完成統計結算 Modal ===== -->
-    <div id="resultModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-3xl p-6 md:p-8 max-w-lg w-full shadow-2xl border-4 border-yellow-400 text-center animate-pop relative overflow-hidden">
-            <div class="text-5xl mb-2">🏆</div>
-            <h2 class="text-2xl md:text-3xl font-black text-amber-900 mb-1">挑戰完成！太棒了！</h2>
-            <p class="text-gray-500 text-xs md:text-sm mb-6">遊樂園頒發給你的今日數學獎牌</p>
-
-            <!-- 數據卡片 -->
-            <div class="grid grid-cols-3 gap-3 mb-6">
-                <div class="bg-amber-50 p-3 rounded-2xl border border-amber-200">
-                    <div class="text-xs text-amber-600 font-bold">總題數</div>
-                    <div id="resTotal" class="text-2xl font-black text-amber-900">15</div>
-                </div>
-                <div class="bg-emerald-50 p-3 rounded-2xl border border-emerald-200">
-                    <div class="text-xs text-emerald-600 font-bold">答對數</div>
-                    <div id="resCorrect" class="text-2xl font-black text-emerald-600">14</div>
-                </div>
-                <div class="bg-rose-50 p-3 rounded-2xl border border-rose-200">
-                    <div class="text-xs text-rose-600 font-bold">正確率</div>
-                    <div id="resRate" class="text-2xl font-black text-rose-500">93%</div>
-                </div>
-            </div>
-
-            <!-- 常錯題目總結 (如果有的話) -->
-            <div id="resWrongContainer" class="mb-6 text-left bg-gray-50 p-3.5 rounded-2xl border border-gray-200 hidden">
-                <div class="text-xs font-bold text-rose-600 mb-2 flex items-center">
-                    <i class="fas fa-exclamation-circle mr-1"></i> 本次需要加強的題目：
-                </div>
-                <div id="resWrongList" class="flex flex-wrap gap-2 text-xs font-bold text-gray-700"></div>
-            </div>
-
-            <!-- 按鈕組 -->
-            <div class="flex space-x-3">
-                <button onclick="closeResultModal(); startGame();" class="3d-btn flex-1 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-black rounded-xl border-2 border-emerald-300">
-                    再挑戰一次
-                </button>
-                <button onclick="closeResultModal(); openDiaryModal();" class="3d-btn px-4 py-3 bg-amber-500 hover:bg-amber-600 text-white font-black rounded-xl border-2 border-amber-300">
-                    看學習日記
+            <div class="mt-4">
+                <button onclick="saveSelection()" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-2.5 rounded-xl shadow-md text-sm">
+                    確認關卡並開始！
                 </button>
             </div>
         </div>
     </div>
 
-
-    <!-- ===== 4. 學習日記 Modal (挑戰記錄 & 常錯題目) ===== -->
-    <div id="diaryModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-3xl p-5 md:p-7 max-w-2xl w-full shadow-2xl border-4 border-amber-400 animate-pop flex flex-col max-h-[88vh]">
-            
-            <!-- Modal 頂部列 -->
-            <div class="flex justify-between items-center pb-3 border-b-2 border-amber-100 mb-4">
-                <div class="flex items-center space-x-2">
-                    <div class="w-9 h-9 bg-amber-500 text-white rounded-xl flex items-center justify-center font-bold">
-                        <i class="fas fa-book-open"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-black text-gray-800">乘法大師學習日記</h3>
-                        <p class="text-xs text-gray-500">自動記錄保存在瀏覽器中</p>
-                    </div>
-                </div>
-                <button onclick="closeDiaryModal()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold flex items-center justify-center">
-                    ✕
-                </button>
+    <!-- 挑戰日記 Modal -->
+    <div id="diaryModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-3 hidden">
+        <div class="bg-white rounded-3xl p-5 max-w-lg w-full border-4 border-purple-300 shadow-2xl relative max-h-[85vh] flex flex-col">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="text-xl font-black text-purple-600 flex items-center gap-2">
+                    <i class="fa-solid fa-book-bookmark"></i> 每日學習挑戰日記
+                </h3>
+                <button onclick="closeDiaryModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold px-2">&times;</button>
             </div>
-
-            <!-- 日記內容可滾動區域 -->
-            <div class="overflow-y-auto no-scrollbar space-y-5 flex-1 pr-1">
-                
-                <!-- 總體統計簡報 -->
-                <div class="bg-gradient-to-r from-amber-50 to-orange-50 p-4 rounded-2xl border border-amber-200 flex justify-around text-center">
-                    <div>
-                        <div class="text-xs text-amber-700 font-bold">累積總挑戰</div>
-                        <div id="statTotalCount" class="text-xl md:text-2xl font-black text-amber-900">0 次</div>
-                    </div>
-                    <div class="border-r border-amber-200"></div>
-                    <div>
-                        <div class="text-xs text-amber-700 font-bold">平均正確率</div>
-                        <div id="statAvgRate" class="text-xl md:text-2xl font-black text-emerald-600">0%</div>
-                    </div>
-                    <div class="border-r border-amber-200"></div>
-                    <div>
-                        <div class="text-xs text-amber-700 font-bold">常錯魔王題數</div>
-                        <div id="statMissedCount" class="text-xl md:text-2xl font-black text-rose-500">0 題</div>
-                    </div>
-                </div>
-
-                <!-- 常錯題目排行榜榜單 -->
-                <div class="bg-rose-50/70 p-4 rounded-2xl border border-rose-200">
-                    <h4 class="text-sm font-black text-rose-800 mb-2 flex items-center">
-                        <i class="fas fa-ghost mr-1.5 text-rose-500"></i> 需要多練習的「常錯題目」：
-                    </h4>
-                    <div id="frequentWrongList" class="flex flex-wrap gap-2">
-                        <!-- 動態渲染常錯題目標籤 -->
-                    </div>
-                </div>
-
-                <!-- 歷史挑戰歷程列表 -->
+            <div class="grid grid-cols-3 gap-2 mb-3 bg-purple-50 p-3 rounded-2xl border border-purple-100 text-center">
                 <div>
-                    <h4 class="text-sm font-black text-gray-700 mb-2.5 flex items-center">
-                        <i class="fas fa-history mr-1.5 text-amber-500"></i> 每日挑戰記錄：
-                    </h4>
-                    <div id="historyLogsContainer" class="space-y-2">
-                        <!-- 動態注入歷史記錄卡片 -->
-                    </div>
+                    <div class="text-xs text-purple-600 font-bold">總挑戰次數</div>
+                    <div id="statTotal" class="text-xl font-black text-purple-800">0</div>
                 </div>
-
+                <div>
+                    <div class="text-xs text-purple-600 font-bold">平均正確率</div>
+                    <div id="statAccuracy" class="text-xl font-black text-emerald-600">0%</div>
+                </div>
+                <div>
+                    <div class="text-xs text-purple-600 font-bold">最常錯魔王題</div>
+                    <div id="statHardest" class="text-lg font-black text-rose-500">無</div>
+                </div>
             </div>
-
-            <!-- 底部清除紀錄 -->
-            <div class="pt-3 mt-2 border-t border-gray-100 flex justify-between items-center text-xs">
-                <button onclick="clearHistoryLogs()" class="text-rose-500 hover:text-rose-700 font-bold underline">
-                    清除所有歷史紀錄
-                </button>
-                <button onclick="closeDiaryModal()" class="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl">
-                    關閉日記
-                </button>
+            <div class="flex-1 overflow-y-auto space-y-2 pr-1" id="diaryList"></div>
+            <div class="mt-4 flex justify-between items-center pt-2 border-t border-slate-100">
+                <button onclick="clearDiaryData()" class="text-xs text-rose-500 hover:underline"><i class="fa-solid fa-trash-can"></i> 清除紀錄</button>
+                <button onclick="closeDiaryModal()" class="bg-purple-500 hover:bg-purple-600 text-white font-bold px-5 py-2 rounded-xl text-xs shadow">關閉</button>
             </div>
-
         </div>
     </div>
-
 
     <script>
-        /* ==========================================================
-           遊戲核心 Logic & Speech Synthesis & LocalStorage Manager
-           ========================================================== */
-
-        // 狀態變數
         let selectedTables = [2, 3, 4, 5, 6, 7, 8, 9];
-        let totalQuestionsPerRound = 15;
-        let currentQuestionIndex = 0;
-        let scoreCorrect = 0;
-        let streakCount = 0;
-
-        let numA = 0;
-        let numB = 0;
-        let currentAnswer = 0;
-        let userInput = "";
+        let currentA = 3, currentB = 6, userAnswer = "";
+        let scoreRightCount = 0, scoreWrongCount = 0;
         
-        let roundQuestions = []; // 預先產生的題目陣列
-        let roundWrongQuestions = []; // 本輪錯題
+        const synth = window.speechSynthesis;
+        let audioCtx = null, isBgmPlaying = true, bgmTimer = null, currentStep = 0;
 
-        // 音訊 Audio Context (Web Audio API 背景音樂與音效)
-        let audioCtx = null;
-        let bgmOscillator = null;
-        let bgmGain = null;
-        let isBgmPlaying = false;
-        let bgmTimer = null;
+        const melodyNotes = [
+            523.25, 659.25, 783.99, 1046.50,
+            880.00, 659.25, 783.99, 659.25,
+            587.33, 698.46, 880.00, 987.77,
+            783.99, 659.25, 523.25, 659.25
+        ];
 
-        // 頁面初始化
-        window.addEventListener('DOMContentLoaded', () => {
-            updateSelectedTablesUI();
-            loadHistoryAndRenderDiary();
-
-            // 解鎖行動裝置 (iOS/Android) 的 Web Audio 與語音發音限制
-            const unlockAudio = () => {
-                initAudioContext();
-                if ('speechSynthesis' in window && window.speechSynthesis.paused) {
-                    window.speechSynthesis.resume();
-                }
-                document.removeEventListener('touchstart', unlockAudio);
-                document.removeEventListener('pointerdown', unlockAudio);
-            };
-            document.addEventListener('touchstart', unlockAudio, { once: true });
-            document.addEventListener('pointerdown', unlockAudio, { once: true });
-        });
-
-        /* ----- 1. 段數選擇 Logic ----- */
-        function updateSelectedTablesUI() {
-            const checkboxes = document.querySelectorAll('.table-checkbox');
-            selectedTables = [];
-            checkboxes.forEach(cb => {
-                const label = cb.parentElement;
-                const checkIcon = label.querySelector('.check-icon');
-                if (cb.checked) {
-                    selectedTables.push(parseInt(cb.value));
-                    label.classList.add('border-amber-400', 'bg-amber-100');
-                    label.classList.remove('border-amber-200', 'bg-amber-50');
-                    if (checkIcon) checkIcon.classList.remove('opacity-0');
-                } else {
-                    label.classList.remove('border-amber-400', 'bg-amber-100');
-                    label.classList.add('border-amber-200', 'bg-amber-50');
-                    if (checkIcon) checkIcon.classList.add('opacity-0');
-                }
-            });
-        }
-
-        function selectAllTables(selectAll) {
-            const checkboxes = document.querySelectorAll('.table-checkbox');
-            checkboxes.forEach(cb => cb.checked = selectAll);
-            updateSelectedTablesUI();
-        }
-
-        function showSetupScreen() {
-            document.getElementById('setupScreen').classList.remove('hidden');
-            document.getElementById('gameScreen').classList.add('hidden');
-        }
-
-        /* ----- 2. 遊戲開始 & 題目生成 ----- */
-        function startGame() {
-            if (selectedTables.length === 0) {
-                alert("請至少選擇一個乘法表段數喔！");
-                return;
-            }
-
-            totalQuestionsPerRound = parseInt(document.getElementById('questionCountSelect').value) || 15;
-            currentQuestionIndex = 0;
-            scoreCorrect = 0;
-            streakCount = 0;
-            roundWrongQuestions = [];
-
-            // 生成隨機題目庫
-            roundQuestions = [];
-            for (let i = 0; i < totalQuestionsPerRound; i++) {
-                const randA = selectedTables[Math.floor(Math.random() * selectedTables.length)];
-                const randB = Math.floor(Math.random() * 9) + 1; // 1~9
-                roundQuestions.push({ a: randA, b: randB });
-            }
-
-            // 切換視圖
-            document.getElementById('setupScreen').classList.add('hidden');
-            document.getElementById('gameScreen').classList.remove('hidden');
-
-            loadNextQuestion();
-        }
-
-        function loadNextQuestion() {
-            if (currentQuestionIndex >= totalQuestionsPerRound) {
-                finishGameRound();
-                return;
-            }
-
-            const q = roundQuestions[currentQuestionIndex];
-            numA = q.a;
-            numB = q.b;
-            currentAnswer = numA * numB;
-            userInput = "";
-
-            // 更新 UI
-            document.getElementById('numA').innerText = numA;
-            document.getElementById('numB').innerText = numB;
-            document.getElementById('userInputText').innerText = "?";
-            document.getElementById('userInputText').className = "text-amber-400";
-            
-            // 更新進度條
-            document.getElementById('progressText').innerText = `題目：${currentQuestionIndex + 1} / ${totalQuestionsPerRound}`;
-            document.getElementById('streakText').innerHTML = `<i class="fas fa-fire"></i> 連對 ${streakCount}`;
-            const pct = ((currentQuestionIndex) / totalQuestionsPerRound) * 100;
-            document.getElementById('progressBar').style.width = `${pct}%`;
-
-            // 自動語音讀題
-            speakCurrentQuestion();
-        }
-
-        /* ----- 3. 語音發音 (Web Speech API) ----- */
-        function speakText(text) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel(); // 停止先前的發音
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'zh-TW';
-                utterance.rate = 1.1; // 稍微快一點比較生動
-                utterance.pitch = 1.2; // 稍微高音，適合兒童
-                window.speechSynthesis.speak(utterance);
-            }
-        }
-
-        function speakCurrentQuestion() {
-            // 使用同音字「承以」替換，修正部分瀏覽器 TTS 將「乘」誤讀為「剩 (shèng)」的問題
-            speakText(`${numA} 承以 ${numB} 等於多少？`);
-        }
-
-        /* ----- 4. 數字鍵盤操作 ----- */
-        function pressNum(num) {
-            if (userInput.length >= 3) return; // 答案最大三位數
-            
-            userInput += num.toString();
-            document.getElementById('userInputText').innerText = userInput;
-            document.getElementById('userInputText').className = "text-emerald-600 font-extrabold";
-
-            // 按下時念出數字語音
-            speakText(num.toString());
-            playBeepSound(400 + num * 30, 'sine', 0.08);
-        }
-
-        function pressDelete() {
-            if (userInput.length > 0) {
-                userInput = userInput.slice(0, -1);
-                document.getElementById('userInputText').innerText = userInput.length > 0 ? userInput : "?";
-                if (userInput.length === 0) {
-                    document.getElementById('userInputText').className = "text-amber-400";
-                }
-                playBeepSound(300, 'square', 0.05);
-            }
-        }
-
-        /* ----- 5. 答案驗證與回饋 ----- */
-        function submitAnswer() {
-            if (userInput === "") return;
-
-            const userVal = parseInt(userInput);
-            const isCorrect = (userVal === currentAnswer);
-
-            showFeedbackOverlay(isCorrect);
-
-            if (isCorrect) {
-                scoreCorrect++;
-                streakCount++;
-                playCorrectSound();
-                speakText("答對了！太棒了！");
-            } else {
-                streakCount = 0;
-                roundWrongQuestions.push({ a: numA, b: numB, wrongInput: userVal, answer: currentAnswer });
-                playWrongSound();
-                speakText(`答錯囉，答案是 ${currentAnswer}`);
-            }
-
-            // 1.2 秒後進入下一題
-            setTimeout(() => {
-                hideFeedbackOverlay();
-                currentQuestionIndex++;
-                loadNextQuestion();
-            }, 1300);
-        }
-
-        function showFeedbackOverlay(isCorrect) {
-            const overlay = document.getElementById('feedbackOverlay');
-            const content = document.getElementById('feedbackContent');
-
-            if (isCorrect) {
-                content.innerHTML = `
-                    <div class="text-6xl mb-2 animate-bounce">🌟</div>
-                    <div class="text-2xl font-black text-emerald-600">答對了！好厲害！</div>
-                `;
-            } else {
-                content.innerHTML = `
-                    <div class="text-6xl mb-2">😅</div>
-                    <div class="text-2xl font-black text-rose-500">差一點點！</div>
-                    <div class="text-sm font-bold text-gray-600 mt-1">${numA} × ${numB} = <span class="text-emerald-600 font-extrabold text-lg">${currentAnswer}</span></div>
-                `;
-            }
-
-            overlay.classList.remove('opacity-0', 'pointer-events-none');
-            overlay.classList.add('opacity-100');
-        }
-
-        function hideFeedbackOverlay() {
-            const overlay = document.getElementById('feedbackOverlay');
-            overlay.classList.add('opacity-0', 'pointer-events-none');
-            overlay.classList.remove('opacity-100');
-        }
-
-        /* ----- 6. 本輪結束與 LocalStorage 紀錄存檔 ----- */
-        function finishGameRound() {
-            const errorRate = Math.round(((totalQuestionsPerRound - scoreCorrect) / totalQuestionsPerRound) * 100);
-            const accuracyRate = 100 - errorRate;
-
-            // 顯示結算 Modal
-            document.getElementById('resTotal').innerText = totalQuestionsPerRound;
-            document.getElementById('resCorrect').innerText = scoreCorrect;
-            document.getElementById('resRate').innerText = `${accuracyRate}%`;
-
-            const wrongContainer = document.getElementById('resWrongContainer');
-            const wrongList = document.getElementById('resWrongList');
-            wrongList.innerHTML = "";
-
-            if (roundWrongQuestions.length > 0) {
-                wrongContainer.classList.remove('hidden');
-                roundWrongQuestions.forEach(item => {
-                    const tag = document.createElement('span');
-                    tag.className = "px-2.5 py-1 bg-rose-100 text-rose-700 rounded-lg border border-rose-300";
-                    tag.innerText = `${item.a} × ${item.b} = ${item.answer}`;
-                    wrongList.appendChild(tag);
-                });
-            } else {
-                wrongContainer.classList.add('hidden');
-            }
-
-            document.getElementById('resultModal').classList.remove('hidden');
-
-            // 儲存紀錄到 LocalStorage
-            saveRoundToStorage({
-                date: new Date().toLocaleDateString('zh-TW', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
-                tablesStr: selectedTables.join(', ') + ' 段',
-                total: totalQuestionsPerRound,
-                correct: scoreCorrect,
-                errorRate: errorRate,
-                accuracyRate: accuracyRate,
-                wrongItems: roundWrongQuestions.map(w => `${w.a}×${w.b}`)
-            });
-        }
-
-        function closeResultModal() {
-            document.getElementById('resultModal').classList.add('hidden');
-        }
-
-
-        /* ----- 7. 日記歷史 LocalStorage 存取與渲染 ----- */
-        const STORAGE_KEY = 'kids_99_park_logs_v1';
-
-        function getStoredLogs() {
-            try {
-                return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-            } catch (e) {
-                return [];
-            }
-        }
-
-        function saveRoundToStorage(logEntry) {
-            let logs = getStoredLogs();
-            logs.unshift(logEntry); // 最新紀錄排在最前
-            if (logs.length > 50) logs = logs.slice(0, 50); // 最多留50筆
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
-        }
-
-        function openDiaryModal() {
-            loadHistoryAndRenderDiary();
-            document.getElementById('diaryModal').classList.remove('hidden');
-        }
-
-        function closeDiaryModal() {
-            document.getElementById('diaryModal').classList.add('hidden');
-        }
-
-        function loadHistoryAndRenderDiary() {
-            const logs = getStoredLogs();
-            
-            // 計算統計數據
-            const totalRounds = logs.length;
-            let sumAccuracy = 0;
-            const wrongFrequencyMap = {};
-
-            logs.forEach(log => {
-                sumAccuracy += log.accuracyRate;
-                if (log.wrongItems && Array.isArray(log.wrongItems)) {
-                    log.wrongItems.forEach(item => {
-                        wrongFrequencyMap[item] = (wrongFrequencyMap[item] || 0) + 1;
-                    });
-                }
-            });
-
-            const avgRate = totalRounds > 0 ? Math.round(sumAccuracy / totalRounds) : 0;
-
-            // 渲染統計頭部
-            document.getElementById('statTotalCount').innerText = `${totalRounds} 次`;
-            document.getElementById('statAvgRate').innerText = `${avgRate}%`;
-            
-            // 常錯魔王題排序
-            const sortedWrong = Object.keys(wrongFrequencyMap).sort((a,b) => wrongFrequencyMap[b] - wrongFrequencyMap[a]);
-            document.getElementById('statMissedCount').innerText = `${sortedWrong.length} 題`;
-
-            const freqWrongContainer = document.getElementById('frequentWrongList');
-            freqWrongContainer.innerHTML = "";
-            if (sortedWrong.length === 0) {
-                freqWrongContainer.innerHTML = `<span class="text-xs text-gray-400 font-bold">目前沒有常錯題目，表現太精彩了！👏</span>`;
-            } else {
-                sortedWrong.slice(0, 8).forEach(item => {
-                    const count = wrongFrequencyMap[item];
-                    const tag = document.createElement('span');
-                    tag.className = "px-3 py-1 bg-rose-500 text-white rounded-full font-bold text-xs shadow-sm flex items-center space-x-1";
-                    tag.innerHTML = `<span>${item}</span><span class="bg-rose-700 px-1.5 py-0.2 rounded-full text-[10px]">錯 ${count} 次</span>`;
-                    freqWrongContainer.appendChild(tag);
-                });
-            }
-
-            // 渲染歷史清單
-            const logsContainer = document.getElementById('historyLogsContainer');
-            logsContainer.innerHTML = "";
-            if (logs.length === 0) {
-                logsContainer.innerHTML = `<div class="text-center py-6 text-gray-400 text-xs font-bold">尚無挑戰紀錄，快去挑戰吧！</div>`;
-            } else {
-                logs.forEach(log => {
-                    const card = document.createElement('div');
-                    card.className = "p-3 bg-gray-50 hover:bg-amber-50/50 rounded-xl border border-gray-200 transition flex items-center justify-between text-xs";
-                    card.innerHTML = `
-                        <div>
-                            <div class="font-extrabold text-gray-800">${log.date} <span class="ml-2 text-amber-700 font-bold bg-amber-100 px-2 py-0.5 rounded-md">${log.tablesStr}</span></div>
-                            <div class="text-gray-500 mt-1">答對 ${log.correct} / ${log.total} 題 · 錯誤率：<span class="text-rose-500 font-bold">${log.errorRate}%</span></div>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-base font-black ${log.accuracyRate >= 80 ? 'text-emerald-600' : 'text-amber-600'}">${log.accuracyRate}% 正確</span>
-                        </div>
-                    `;
-                    logsContainer.appendChild(card);
-                });
-            }
-        }
-
-        function clearHistoryLogs() {
-            if (confirm("確定要清除所有的學習日記紀錄嗎？")) {
-                localStorage.removeItem(STORAGE_KEY);
-                loadHistoryAndRenderDiary();
-            }
-        }
-
-
-        /* ----- 8. Web Audio API 音效與遊樂園馬戲團背景音樂（BGM）合成器 ----- */
         function initAudioContext() {
             if (!audioCtx) {
-                const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
-                audioCtx = new AudioCtxClass();
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
             }
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
         }
 
-        // 短促音效產生器
-        function playBeepSound(freq, type, duration) {
-            try {
-                initAudioContext();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = type || 'sine';
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + duration);
-            } catch(e) {}
+        function playBgmStep() {
+            if (!isBgmPlaying || !audioCtx) return;
+            const freq = melodyNotes[currentStep % melodyNotes.length];
+            currentStep++;
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.45);
         }
 
-        function playCorrectSound() {
-            try {
-                initAudioContext();
-                const now = audioCtx.currentTime;
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'triangle';
-                // 答對音階：Do - Mi - Sol - HighDo
-                osc.frequency.setValueAtTime(523.25, now); // C5
-                osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
-                osc.frequency.setValueAtTime(783.99, now + 0.16); // G5
-                osc.frequency.setValueAtTime(1046.50, now + 0.24); // C6
-
-                gain.gain.setValueAtTime(0.2, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start(now);
-                osc.stop(now + 0.5);
-            } catch(e) {}
+        function startBGM() {
+            initAudioContext();
+            if (bgmTimer) clearInterval(bgmTimer);
+            bgmTimer = setInterval(playBgmStep, 250);
         }
-
-        function playWrongSound() {
-            try {
-                initAudioContext();
-                const now = audioCtx.currentTime;
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(220, now);
-                osc.frequency.setValueAtTime(180, now + 0.15);
-
-                gain.gain.setValueAtTime(0.15, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start(now);
-                osc.stop(now + 0.35);
-            } catch(e) {}
-        }
-
-        // 遊樂園歡樂木琴風格 BGM 循環播放器
-        const carouselMelody = [
-            { note: 523.25, dur: 0.25 }, { note: 659.25, dur: 0.25 }, { note: 783.99, dur: 0.25 }, { note: 1046.5, dur: 0.25 },
-            { note: 880.00, dur: 0.25 }, { note: 659.25, dur: 0.25 }, { note: 783.99, dur: 0.5 },
-            { note: 587.33, dur: 0.25 }, { note: 659.25, dur: 0.25 }, { note: 698.46, dur: 0.25 }, { note: 880.00, dur: 0.25 },
-            { note: 783.99, dur: 0.5 },  { note: 523.25, dur: 0.5 }
-        ];
-
-        let noteStep = 0;
 
         function toggleBGM() {
-            initAudioContext();
             isBgmPlaying = !isBgmPlaying;
-            
-            const bgmBtn = document.getElementById('bgmToggleBtn');
-            const bgmIcon = document.getElementById('bgmIcon');
-            const bgmText = document.getElementById('bgmText');
-
+            const bgmBtn = document.getElementById("bgmBtn");
+            const bgmText = document.getElementById("bgmText");
             if (isBgmPlaying) {
-                bgmBtn.classList.replace('bg-purple-500', 'bg-emerald-500');
-                bgmBtn.classList.replace('hover:bg-purple-600', 'hover:bg-emerald-600');
-                bgmIcon.className = "fas fa-volume-up animate-pulse";
+                bgmBtn.className = "bg-pink-500 hover:bg-pink-600 text-white font-bold text-xs md:text-sm px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5";
                 bgmText.innerText = "音樂: 開";
-                playBGMStep();
+                startBGM();
             } else {
-                bgmBtn.classList.replace('bg-emerald-500', 'bg-purple-500');
-                bgmBtn.classList.replace('hover:bg-emerald-600', 'hover:bg-purple-600');
-                bgmIcon.className = "fas fa-music";
+                bgmBtn.className = "bg-slate-400 hover:bg-slate-500 text-white font-bold text-xs md:text-sm px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5";
                 bgmText.innerText = "音樂: 關";
-                if (bgmTimer) clearTimeout(bgmTimer);
+                if (bgmTimer) clearInterval(bgmTimer);
             }
         }
 
-        function playBGMStep() {
-            if (!isBgmPlaying) return;
+        window.addEventListener('DOMContentLoaded', () => {
+            generateNextQuestion();
+            updateLevelTag();
+            document.body.addEventListener('pointerdown', () => {
+                initAudioContext();
+                if (isBgmPlaying && !bgmTimer) startBGM();
+            }, { once: true });
+        });
 
-            const item = carouselMelody[noteStep];
-            try {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sine'; // 木琴軟和音色
-                osc.frequency.setValueAtTime(item.note, audioCtx.currentTime);
+        function speakNumber(num) {
+            initAudioContext();
+            if ('speechSynthesis' in window) {
+                synth.cancel();
+                const u = new SpeechSynthesisUtterance(num.toString());
+                u.lang = 'zh-TW';
+                u.rate = 1.1;
+                synth.speak(u);
+            }
+        }
 
-                gain.gain.setValueAtTime(0.04, audioCtx.currentTime); // 輕聲背景音樂
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + item.dur);
+        function speakCurrentQuestion() {
+            initAudioContext();
+            if ('speechSynthesis' in window) {
+                synth.cancel();
+                const u = new SpeechSynthesisUtterance(`${currentA} 承以 ${currentB} 等於多少？`);
+                u.lang = 'zh-TW';
+                u.rate = 1.0;
+                synth.speak(u);
+            }
+        }
 
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + item.dur);
-            } catch(e) {}
+        function pressNum(digit) {
+            speakNumber(digit);
+            if (userAnswer.length < 2) {
+                userAnswer += digit.toString();
+                updateDisplay();
+            }
+        }
 
-            noteStep = (noteStep + 1) % carouselMelody.length;
-            bgmTimer = setTimeout(playBGMStep, item.dur * 1000);
+        function clearAnswer() {
+            userAnswer = "";
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            document.getElementById("userAnswerDisplay").innerText = userAnswer === "" ? "?" : userAnswer;
+        }
+
+        function generateNextQuestion() {
+            if (selectedTables.length === 0) selectedTables = [2, 3, 4, 5, 6, 7, 8, 9];
+            currentA = selectedTables[Math.floor(Math.random() * selectedTables.length)];
+            currentB = Math.floor(Math.random() * 9) + 1;
+
+            document.getElementById("numA").innerText = currentA;
+            document.getElementById("numB").innerText = currentB;
+
+            userAnswer = "";
+            updateDisplay();
+            speakCurrentQuestion();
+        }
+
+        function submitAnswer() {
+            if (userAnswer === "") return;
+            const correctVal = currentA * currentB;
+            const userVal = parseInt(userAnswer);
+
+            if (userVal === correctVal) {
+                scoreRightCount++;
+                document.getElementById("scoreRight").innerText = scoreRightCount;
+                document.getElementById("petSpeech").innerText = "太棒了！答對囉！🎉";
+                recordAttempt(currentA, currentB, true);
+                setTimeout(generateNextQuestion, 1000);
+            } else {
+                scoreWrongCount++;
+                document.getElementById("scoreWrong").innerText = scoreWrongCount;
+                document.getElementById("petSpeech").innerText = `差一點點！${currentA}×${currentB}=${correctVal} 喔！💪`;
+                recordAttempt(currentA, currentB, false);
+                clearAnswer();
+            }
+        }
+
+        function recordAttempt(a, b, isCorrect) {
+            const today = new Date().toISOString().split('T')[0];
+            let history = JSON.parse(localStorage.getItem('math_game_diary') || '{}');
+            if (!history[today]) {
+                history[today] = { total: 0, correct: 0, wrong: 0, tablesUsed: [], wrongQuestions: {} };
+            }
+            const dayRecord = history[today];
+            dayRecord.total += 1;
+            if (!dayRecord.tablesUsed.includes(a)) dayRecord.tablesUsed.push(a);
+
+            if (isCorrect) {
+                dayRecord.correct += 1;
+            } else {
+                dayRecord.wrong += 1;
+                const qKey = `${a}×${b}`;
+                dayRecord.wrongQuestions[qKey] = (dayRecord.wrongQuestions[qKey] || 0) + 1;
+            }
+            localStorage.setItem('math_game_diary', JSON.stringify(history));
+        }
+
+        function openSelectModal() { document.getElementById("selectModal").classList.remove("hidden"); }
+        function selectAll(checked) { document.querySelectorAll('.num-checkbox').forEach(cb => cb.checked = checked); }
+        function saveSelection() {
+            const checkboxes = document.querySelectorAll('.num-checkbox:checked');
+            selectedTables = Array.from(checkboxes).map(cb => parseInt(cb.value));
+            if (selectedTables.length === 0) return alert("請至少選擇一個段數喔！");
+            document.getElementById("selectModal").classList.add("hidden");
+            updateLevelTag();
+            generateNextQuestion();
+        }
+
+        function updateLevelTag() {
+            document.getElementById("levelTag").innerText = selectedTables.length === 8 ? "全範圍 (2~9段)" : `練習中: ${selectedTables.join(', ')} 段`;
+        }
+
+        function openDiaryModal() { renderDiaryData(); document.getElementById("diaryModal").classList.remove("hidden"); }
+        function closeDiaryModal() { document.getElementById("diaryModal").classList.add("hidden"); }
+
+        function renderDiaryData() {
+            const history = JSON.parse(localStorage.getItem('math_game_diary') || '{}');
+            const dates = Object.keys(history).sort().reverse();
+            let grandTotal = 0, grandCorrect = 0, allWrongStats = {};
+            const listContainer = document.getElementById("diaryList");
+            listContainer.innerHTML = "";
+
+            if (dates.length === 0) {
+                listContainer.innerHTML = `<div class="text-center text-slate-400 py-6 text-sm">還沒有挑戰紀錄喔！</div>`;
+                return;
+            }
+
+            dates.forEach(date => {
+                const rec = history[date];
+                grandTotal += rec.total;
+                grandCorrect += rec.correct;
+                const acc = rec.total > 0 ? Math.round((rec.correct / rec.total) * 100) : 0;
+
+                if (rec.wrongQuestions) {
+                    Object.entries(rec.wrongQuestions).forEach(([q, count]) => {
+                        allWrongStats[q] = (allWrongStats[q] || 0) + count;
+                    });
+                }
+
+                listContainer.innerHTML += `
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-slate-700 text-xs">${date}</span>
+                            <span class="text-xs font-black px-2 py-0.5 rounded ${acc >= 80 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">正確率 ${acc}%</span>
+                        </div>
+                        <div class="text-xs text-slate-500 flex justify-between">
+                            <span>挑戰段數: ${rec.tablesUsed ? rec.tablesUsed.join(', ') : ''} 段</span>
+                            <span>答對 ${rec.correct} / 總題 ${rec.total}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById("statTotal").innerText = grandTotal;
+            document.getElementById("statAccuracy").innerText = grandTotal > 0 ? `${Math.round((grandCorrect / grandTotal) * 100)}%` : "0%";
+
+            let hardest = "無", maxW = 0;
+            Object.entries(allWrongStats).forEach(([q, count]) => {
+                if (count > maxW) { maxW = count; hardest = q; }
+            });
+            document.getElementById("statHardest").innerText = hardest;
+        }
+
+        function clearDiaryData() {
+            if (confirm("確定要清除所有挑戰紀錄嗎？")) {
+                localStorage.removeItem('math_game_diary');
+                renderDiaryData();
+            }
         }
     </script>
 </body>

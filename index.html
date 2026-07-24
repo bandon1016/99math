@@ -599,16 +599,22 @@
             speakCurrentQuestion();
         }
 
-        /* 語音發音 (修正為「承以」ㄔㄥˊ ㄧˇ) */
+        /* 語音發音 (修正語音佇列卡死問題與「承以」ㄔㄥˊ ㄧˇ 發音) */
         function speakText(text) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'zh-TW';
-                utterance.rate = 1.1;
-                utterance.pitch = 1.2;
-                utterance.volume = sfxVolume; // 讀題語音音量
-                window.speechSynthesis.speak(utterance);
+                // 加上 50ms 延遲與 resume()，避免瀏覽器語音佇列凍結失效
+                setTimeout(() => {
+                    if ('speechSynthesis' in window) {
+                        window.speechSynthesis.resume();
+                        const utterance = new SpeechSynthesisUtterance(text);
+                        utterance.lang = 'zh-TW';
+                        utterance.rate = 1.1;
+                        utterance.pitch = 1.2;
+                        utterance.volume = sfxVolume; // 讀題語音音量
+                        window.speechSynthesis.speak(utterance);
+                    }
+                }, 50);
             }
         }
 

@@ -508,6 +508,36 @@
             document.getElementById('sfxVolText').innerText = Math.round(sfxVolume * 100) + '%';
         }
 
+        /* 補上更新選擇段數 UI 與 selectedTables 陣列之函式 */
+        function updateSelectedTablesUI() {
+            const checkboxes = document.querySelectorAll('.table-checkbox');
+            selectedTables = [];
+            checkboxes.forEach(cb => {
+                const label = cb.closest('label');
+                const checkIcon = label ? label.querySelector('.check-icon') : null;
+                if (cb.checked) {
+                    selectedTables.push(parseInt(cb.value));
+                    if (label) {
+                        label.classList.add('border-amber-200', 'bg-amber-50');
+                        label.classList.remove('border-gray-300', 'bg-gray-100', 'opacity-40');
+                    }
+                    if (checkIcon) {
+                        checkIcon.classList.remove('opacity-0');
+                        checkIcon.classList.add('opacity-100');
+                    }
+                } else {
+                    if (label) {
+                        label.classList.remove('border-amber-200', 'bg-amber-50');
+                        label.classList.add('border-gray-300', 'bg-gray-100', 'opacity-40');
+                    }
+                    if (checkIcon) {
+                        checkIcon.classList.remove('opacity-100');
+                        checkIcon.classList.add('opacity-0');
+                    }
+                }
+            });
+        }
+
         function selectAllTables(selectAll) {
             const checkboxes = document.querySelectorAll('.table-checkbox');
             checkboxes.forEach(cb => cb.checked = selectAll);

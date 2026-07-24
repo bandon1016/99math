@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>歡樂遊樂園 - 99乘法表大冒險</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -46,21 +46,21 @@
 
         /* 浮雕立體按鈕樣式 */
         .btn-3d {
-            box-shadow: 0 6px 0 rgba(0,0,0,0.15), inset 0 2px 0 rgba(255,255,255,0.4);
+            box-shadow: 0 5px 0 rgba(0,0,0,0.15), inset 0 2px 0 rgba(255,255,255,0.4);
             transition: all 0.08s ease;
         }
         .btn-3d:active {
             box-shadow: 0 2px 0 rgba(0,0,0,0.15), inset 0 2px 0 rgba(255,255,255,0.4);
-            transform: translateY(4px);
+            transform: translateY(3px);
         }
 
         /* 自訂彈窗動畫 */
         @keyframes pop-in {
-            0% { transform: scale(0.8); opacity: 0; }
+            0% { transform: scale(0.85); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
         .animate-pop {
-            animation: pop-in 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            animation: pop-in 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
 
         .no-scrollbar::-webkit-scrollbar {
@@ -74,21 +74,21 @@
 </head>
 <body class="bg-gradient-to-b from-sky-300 via-sky-200 to-amber-100 min-h-screen flex flex-col justify-between relative overflow-x-hidden overflow-y-auto select-none">
 
-    <!-- 本地背景音樂標籤 (自動相容 bgm.mp3 檔案) -->
+    <!-- 本地背景音樂標籤 (自動相容同資料夾下的 bgm.mp3 檔案) -->
     <audio id="bgmAudio" src="bgm.mp3" loop preload="auto"></audio>
 
     <!-- 動態遊樂園背景圖層 (摩天輪、雲朵) -->
     <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <svg class="absolute top-4 left-10 w-32 md:w-48 text-white/80 animate-cloud" viewBox="0 0 24 24" fill="currentColor">
+        <svg class="absolute top-4 left-10 w-28 md:w-44 text-white/80 animate-cloud" viewBox="0 0 24 24" fill="currentColor">
             <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/>
         </svg>
-        <svg class="absolute top-12 right-20 w-40 md:w-64 text-white/70 animate-cloud" style="animation-delay: -5s;" viewBox="0 0 24 24" fill="currentColor">
+        <svg class="absolute top-12 right-20 w-36 md:w-60 text-white/70 animate-cloud" style="animation-delay: -5s;" viewBox="0 0 24 24" fill="currentColor">
             <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/>
         </svg>
 
         <!-- 摩天輪 (右下角大背景) -->
         <div class="absolute -bottom-12 -right-12 opacity-35 md:opacity-50">
-            <svg width="450" height="450" viewBox="0 0 400 400" class="w-[300px] h-[300px] md:w-[480px] md:h-[480px]">
+            <svg width="450" height="450" viewBox="0 0 400 400" class="w-[280px] h-[280px] md:w-[480px] md:h-[480px]">
                 <polygon points="200,200 130,380 270,380" fill="#F43F5E" />
                 <polygon points="200,200 150,380 250,380" fill="#FB7185" />
                 <g class="ferris-wheel-spin">
@@ -117,7 +117,6 @@
         <div class="absolute bottom-0 inset-x-0 h-12 md:h-16 bg-emerald-500 rounded-t-[40%] scale-x-110 z-0"></div>
     </div>
 
-    <!-- 頂部列 -->
     <header class="relative z-10 px-3 py-1.5 md:px-6 md:py-2 flex items-center justify-between bg-white/85 backdrop-blur-md border-b-2 md:border-b-4 border-yellow-400 shadow-sm shrink-0">
         <div class="flex items-center space-x-2 md:space-x-3">
             <div class="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-tr from-pink-500 to-amber-400 rounded-xl flex items-center justify-center text-white text-base md:text-2xl shadow-md transform -rotate-6">
@@ -152,7 +151,6 @@
         </div>
     </header>
 
-    <!-- 主要內容區 -->
     <main class="relative z-10 flex-1 flex items-center justify-center p-2 sm:p-4 md:p-6 max-w-6xl mx-auto w-full my-auto">
 
         <!-- 1. 關卡選擇畫面 (Setup Screen) -->
@@ -163,7 +161,7 @@
                 <p class="text-gray-600 text-xs md:text-sm mt-0.5">可勾選多個段數進行混合隨機出題</p>
             </div>
 
-            <!-- 段數選擇 -->
+            <!-- 段數選擇區 (2~9) -->
             <div class="grid grid-cols-4 gap-2 md:gap-3 mb-4 md:mb-6">
                 <script>
                     for(let i=2; i<=9; i++) {
@@ -196,6 +194,28 @@
                 </div>
             </div>
 
+            <!-- 倒數挑戰模式設定區 -->
+            <div class="bg-gradient-to-r from-rose-50 to-orange-50 p-3 rounded-2xl border-2 border-rose-200 mb-4 flex flex-col sm:flex-row items-center justify-between gap-2.5">
+                <label class="flex items-center space-x-2 cursor-pointer select-none">
+                    <input type="checkbox" id="challengeModeToggle" onchange="toggleChallengeModeUI()" class="w-5 h-5 accent-rose-500 rounded cursor-pointer">
+                    <span class="font-black text-rose-800 text-xs md:text-sm flex items-center">
+                        <i class="fas fa-stopwatch mr-1.5 text-rose-500 text-base"></i> 開啟限時挑戰模式
+                    </span>
+                </label>
+                
+                <div id="secondsSelectContainer" class="flex items-center space-x-1.5 text-xs font-bold text-rose-900 opacity-40 pointer-events-none transition-opacity">
+                    <span>每題限時：</span>
+                    <select id="secondsSelect" class="bg-white border-2 border-rose-300 rounded-lg px-2 py-1 font-extrabold text-rose-700 focus:outline-none">
+                        <option value="3">3 秒 (極速)</option>
+                        <option value="4">4 秒</option>
+                        <option value="5" selected>5 秒 (推薦)</option>
+                        <option value="6">6 秒</option>
+                        <option value="7">7 秒</option>
+                        <option value="8">8 秒 (輕鬆)</option>
+                    </select>
+                </div>
+            </div>
+
             <button onclick="startGame()" class="btn-3d w-full py-3 bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white text-base md:text-xl font-black rounded-xl md:rounded-2xl border-2 border-emerald-200 shadow-lg flex items-center justify-center space-x-2">
                 <i class="fas fa-play text-yellow-300 text-sm md:text-lg"></i>
                 <span>進入遊樂園開始挑戰！</span>
@@ -223,6 +243,17 @@
                         <i class="fas fa-volume-up text-amber-600"></i>
                         <span>讀題</span>
                     </button>
+                </div>
+
+                <!-- 限時挑戰模式倒數計時條 -->
+                <div id="timerDisplayContainer" class="mt-2 hidden">
+                    <div class="flex justify-between items-center text-xs font-extrabold text-rose-600 mb-0.5">
+                        <span class="flex items-center"><i class="fas fa-hourglass-half mr-1 text-rose-500 animate-spin"></i> 倒數計時</span>
+                        <span id="timerText" class="text-sm font-black text-rose-600">5 秒</span>
+                    </div>
+                    <div class="w-full bg-rose-100 h-2 rounded-full overflow-hidden p-0.5 border border-rose-300">
+                        <div id="timerBar" class="bg-gradient-to-r from-rose-500 to-amber-500 h-full rounded-full transition-all duration-100" style="width: 100%;"></div>
+                    </div>
                 </div>
 
                 <div class="my-auto py-3 text-center relative">
@@ -290,7 +321,7 @@
         <div class="bg-white rounded-3xl p-5 md:p-7 max-w-md w-full shadow-2xl border-4 border-yellow-400 text-center animate-pop relative overflow-hidden">
             <div class="text-4xl mb-2">🏆</div>
             <h2 class="text-2xl font-black text-amber-900 mb-1">挑戰完成！太棒了！</h2>
-            <p class="text-gray-500 text-xs mb-4">遊樂園頒發給你的今日數學獎牌</p>
+            <div id="resModeBadge" class="inline-block px-3 py-0.5 bg-rose-100 text-rose-700 rounded-full font-bold text-xs mb-3 border border-rose-200">⏱️ 限時挑戰模式 (5秒/題)</div>
 
             <div class="grid grid-cols-3 gap-2 mb-4">
                 <div class="bg-amber-50 p-2.5 rounded-2xl border border-amber-200">
@@ -434,6 +465,53 @@
         </div>
     </div>
 
+    <!-- 介面角落 99 乘法表快捷按鈕 -->
+    <button onclick="openTableChartModal()" class="fixed bottom-3 left-3 sm:bottom-4 sm:left-4 z-40 btn-3d px-3 py-2 sm:px-4 sm:py-2.5 bg-gradient-to-r from-yellow-400 to-amber-400 hover:from-yellow-500 hover:to-amber-500 text-amber-950 font-black rounded-2xl shadow-xl border-2 border-yellow-200 flex items-center space-x-1.5 text-xs sm:text-sm transition">
+        <span class="text-base sm:text-lg">📊</span>
+        <span>99 乘法表</span>
+    </button>
+
+    <!-- 6. 九九乘法表對照 Modal -->
+    <div id="tableChartModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 hidden">
+        <div class="bg-white rounded-3xl p-4 sm:p-5 max-w-3xl w-full shadow-2xl border-4 border-amber-400 animate-pop flex flex-col max-h-[88vh]">
+            <div class="flex justify-between items-center pb-2.5 border-b-2 border-amber-100 mb-2.5 shrink-0">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 sm:w-9 sm:h-9 bg-amber-500 text-white rounded-xl flex items-center justify-center font-bold text-base sm:text-lg">
+                        📊
+                    </div>
+                    <div>
+                        <h3 class="text-base sm:text-lg font-black text-gray-800">99 乘法對照表</h3>
+                        <p class="text-[10px] sm:text-xs text-amber-700">記熟乘法表，挑戰拿滿分！</p>
+                    </div>
+                </div>
+                <button onclick="closeTableChartModal()" class="w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold flex items-center justify-center text-xs">
+                    ✕
+                </button>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3 bg-amber-50 p-2 rounded-2xl border border-amber-200 shrink-0 text-xs">
+                <div class="flex items-center space-x-1.5">
+                    <button id="chartTabSelected" onclick="switchChartTab('selected')" class="px-2.5 py-1.5 rounded-xl font-extrabold transition bg-amber-500 text-white shadow-sm">
+                        🎯 目前挑戰段數
+                    </button>
+                    <button id="chartTabAll" onclick="switchChartTab('all')" class="px-2.5 py-1.5 rounded-xl font-extrabold transition bg-gray-200 text-gray-700 hover:bg-gray-300">
+                        📖 看全部 (2~9段)
+                    </button>
+                </div>
+                <div id="chartSubTabs" class="flex flex-wrap gap-1"></div>
+            </div>
+
+            <div id="chartGridContainer" class="overflow-y-auto no-scrollbar grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 flex-1 pr-1">
+            </div>
+
+            <div class="pt-2 mt-2 border-t border-gray-100 flex justify-end shrink-0">
+                <button onclick="closeTableChartModal()" class="btn-3d px-5 py-1.5 bg-amber-500 hover:bg-amber-600 text-white font-black rounded-xl text-xs sm:text-sm border-2 border-amber-300">
+                    關閉對照表
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         /* 遊戲核心狀態 */
         let selectedTables = [2, 3, 4, 5, 6, 7, 8, 9];
@@ -450,9 +528,15 @@
         let roundQuestions = [];
         let roundWrongQuestions = [];
 
-        /* Web Audio API 與 音量控制變數 */
-        let bgmVolume = 0.25; // 預設背景音樂降低至 25%
-        let sfxVolume = 0.8;  // 預設語音與音效為 80%
+        /* 挑戰模式計時狀態 */
+        let isChallengeMode = false;
+        let secondsPerQuestion = 5;
+        let remainingMilliseconds = 5000;
+        let questionTimerInterval = null;
+
+        /* 音量與 Web Audio API 變數 */
+        let bgmVolume = 0.25; // 預設背景音樂 25%
+        let sfxVolume = 0.8;  // 預設語音與音效 80%
 
         let audioCtx = null;
         let isBgmPlaying = false;
@@ -470,7 +554,7 @@
             updateSelectedTablesUI();
             loadHistoryAndRenderDiary();
 
-            // 初始化背景音樂預設音量
+            // 設定背景音樂檔初始音量
             const bgmAudio = document.getElementById('bgmAudio');
             if (bgmAudio) bgmAudio.volume = bgmVolume;
 
@@ -486,29 +570,52 @@
             document.addEventListener('pointerdown', unlockAudio, { once: true });
         });
 
-        function openVolumeModal() {
-            document.getElementById('volumeModal').classList.remove('hidden');
+        /* --- 語音朗讀修復 (修正 乘以 -> 承以 ㄔㄥˊ ㄧˇ 發音) --- */
+        function speakText(text) {
+            if (!('speechSynthesis' in window)) return;
+            try {
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.resume();
+                
+                setTimeout(() => {
+                    const u = new SpeechSynthesisUtterance(text);
+                    u.lang = 'zh-TW';
+                    u.rate = 1.0;
+                    u.volume = sfxVolume;
+                    window.speechSynthesis.speak(u);
+                }, 50);
+            } catch (e) {}
         }
 
-        function closeVolumeModal() {
-            document.getElementById('volumeModal').classList.add('hidden');
+        function speakCurrentQuestion() {
+            speakText(`${numA} 承以 ${numB} 等於多少？`);
         }
 
-        function changeBgmVolume(val) {
-            bgmVolume = parseFloat(val);
-            document.getElementById('bgmVolText').innerText = Math.round(bgmVolume * 100) + '%';
-            const bgmAudio = document.getElementById('bgmAudio');
-            if (bgmAudio) {
-                bgmAudio.volume = bgmVolume;
+        function pressNum(digit) {
+            playBeepSound(500 + digit * 40, 'sine', 0.08);
+            speakText(digit.toString());
+            
+            if (userInput.length < 3) {
+                userInput += digit.toString();
+                document.getElementById('userInputText').innerText = userInput;
+                document.getElementById('userInputText').className = "text-emerald-600 font-black";
             }
         }
 
-        function changeSfxVolume(val) {
-            sfxVolume = parseFloat(val);
-            document.getElementById('sfxVolText').innerText = Math.round(sfxVolume * 100) + '%';
+        function pressDelete() {
+            playBeepSound(300, 'sine', 0.08);
+            if (userInput.length > 0) {
+                userInput = userInput.slice(0, -1);
+            }
+            if (userInput === "") {
+                document.getElementById('userInputText').innerText = "?";
+                document.getElementById('userInputText').className = "text-amber-400";
+            } else {
+                document.getElementById('userInputText').innerText = userInput;
+            }
         }
 
-        /* 補上更新選擇段數 UI 與 selectedTables 陣列之函式 */
+        /* --- 更新選擇段數 (2~9) UI 狀態 --- */
         function updateSelectedTablesUI() {
             const checkboxes = document.querySelectorAll('.table-checkbox');
             selectedTables = [];
@@ -545,8 +652,19 @@
         }
 
         function showSetupScreen() {
+            stopQuestionTimer();
             document.getElementById('setupScreen').classList.remove('hidden');
             document.getElementById('gameScreen').classList.add('hidden');
+        }
+
+        function toggleChallengeModeUI() {
+            const isChecked = document.getElementById('challengeModeToggle').checked;
+            const container = document.getElementById('secondsSelectContainer');
+            if (isChecked) {
+                container.classList.remove('opacity-40', 'pointer-events-none');
+            } else {
+                container.classList.add('opacity-40', 'pointer-events-none');
+            }
         }
 
         function startGame() {
@@ -554,6 +672,9 @@
                 alertModal("請至少選擇一個乘法表段數喔！");
                 return;
             }
+
+            isChallengeMode = document.getElementById('challengeModeToggle').checked;
+            secondsPerQuestion = parseInt(document.getElementById('secondsSelect').value) || 5;
 
             totalQuestionsPerRound = parseInt(document.getElementById('questionCountSelect').value) || 15;
             currentQuestionIndex = 0;
@@ -571,10 +692,19 @@
             document.getElementById('setupScreen').classList.add('hidden');
             document.getElementById('gameScreen').classList.remove('hidden');
 
+            const timerContainer = document.getElementById('timerDisplayContainer');
+            if (isChallengeMode) {
+                timerContainer.classList.remove('hidden');
+            } else {
+                timerContainer.classList.add('hidden');
+            }
+
             loadNextQuestion();
         }
 
         function loadNextQuestion() {
+            stopQuestionTimer();
+
             if (currentQuestionIndex >= totalQuestionsPerRound) {
                 finishGameRound();
                 return;
@@ -597,54 +727,77 @@
             document.getElementById('progressBar').style.width = `${pct}%`;
 
             speakCurrentQuestion();
-        }
 
-        /* 語音發音 (修正語音佇列卡死問題與「承以」ㄔㄥˊ ㄧˇ 發音) */
-        function speakText(text) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                // 加上 50ms 延遲與 resume()，避免瀏覽器語音佇列凍結失效
-                setTimeout(() => {
-                    if ('speechSynthesis' in window) {
-                        window.speechSynthesis.resume();
-                        const utterance = new SpeechSynthesisUtterance(text);
-                        utterance.lang = 'zh-TW';
-                        utterance.rate = 1.1;
-                        utterance.pitch = 1.2;
-                        utterance.volume = sfxVolume; // 讀題語音音量
-                        window.speechSynthesis.speak(utterance);
-                    }
-                }, 50);
+            if (isChallengeMode) {
+                startQuestionTimer();
             }
         }
 
-        function speakCurrentQuestion() {
-            speakText(`${numA} 承以 ${numB} 等於多少？`);
-        }
+        /* 倒數計時邏輯 */
+        function startQuestionTimer() {
+            remainingMilliseconds = secondsPerQuestion * 1000;
+            updateTimerUI();
 
-        function pressNum(num) {
-            if (userInput.length >= 3) return;
-            userInput += num.toString();
-            document.getElementById('userInputText').innerText = userInput;
-            document.getElementById('userInputText').className = "text-emerald-600 font-extrabold";
-
-            speakText(num.toString());
-            playBeepSound(400 + num * 30, 'sine', 0.08);
-        }
-
-        function pressDelete() {
-            if (userInput.length > 0) {
-                userInput = userInput.slice(0, -1);
-                document.getElementById('userInputText').innerText = userInput.length > 0 ? userInput : "?";
-                if (userInput.length === 0) {
-                    document.getElementById('userInputText').className = "text-amber-400";
+            const intervalStep = 100;
+            questionTimerInterval = setInterval(() => {
+                remainingMilliseconds -= intervalStep;
+                if (remainingMilliseconds <= 0) {
+                    remainingMilliseconds = 0;
+                    updateTimerUI();
+                    stopQuestionTimer();
+                    handleQuestionTimeout();
+                } else {
+                    updateTimerUI();
                 }
-                playBeepSound(300, 'square', 0.05);
+            }, intervalStep);
+        }
+
+        function stopQuestionTimer() {
+            if (questionTimerInterval) {
+                clearInterval(questionTimerInterval);
+                questionTimerInterval = null;
             }
+        }
+
+        function updateTimerUI() {
+            const secLeft = (remainingMilliseconds / 1000).toFixed(1);
+            document.getElementById('timerText').innerText = `${secLeft} 秒`;
+            const pct = (remainingMilliseconds / (secondsPerQuestion * 1000)) * 100;
+            document.getElementById('timerBar').style.width = `${pct}%`;
+        }
+
+        function handleQuestionTimeout() {
+            streakCount = 0;
+            roundWrongQuestions.push({ a: numA, b: numB, wrongInput: '逾時', answer: currentAnswer });
+            playWrongSound();
+            speakText(`時間到！答案是 ${currentAnswer}`);
+
+            showTimeoutOverlay();
+
+            setTimeout(() => {
+                hideFeedbackOverlay();
+                currentQuestionIndex++;
+                loadNextQuestion();
+            }, 1300);
+        }
+
+        function showTimeoutOverlay() {
+            const overlay = document.getElementById('feedbackOverlay');
+            const content = document.getElementById('feedbackContent');
+
+            content.innerHTML = `
+                <div class="text-5xl mb-1 animate-pulse">⏰</div>
+                <div class="text-xl font-black text-rose-500">時間到囉！</div>
+                <div class="text-xs font-bold text-gray-600 mt-0.5">${numA} × ${numB} = <span class="text-emerald-600 font-extrabold text-base">${currentAnswer}</span></div>
+            `;
+
+            overlay.classList.remove('opacity-0', 'pointer-events-none');
+            overlay.classList.add('opacity-100');
         }
 
         function submitAnswer() {
             if (userInput === "") return;
+            stopQuestionTimer();
 
             const userVal = parseInt(userInput);
             const isCorrect = (userVal === currentAnswer);
@@ -698,12 +851,23 @@
         }
 
         function finishGameRound() {
+            stopQuestionTimer();
+
             const errorRate = Math.round(((totalQuestionsPerRound - scoreCorrect) / totalQuestionsPerRound) * 100);
             const accuracyRate = 100 - errorRate;
 
             document.getElementById('resTotal').innerText = totalQuestionsPerRound;
             document.getElementById('resCorrect').innerText = scoreCorrect;
             document.getElementById('resRate').innerText = `${accuracyRate}%`;
+
+            const modeBadge = document.getElementById('resModeBadge');
+            if (isChallengeMode) {
+                modeBadge.innerText = `⏱️ 限時挑戰模式 (${secondsPerQuestion}秒/題)`;
+                modeBadge.className = "inline-block px-3 py-0.5 bg-rose-100 text-rose-700 rounded-full font-bold text-xs mb-3 border border-rose-200";
+            } else {
+                modeBadge.innerText = "🎯 一般練習模式";
+                modeBadge.className = "inline-block px-3 py-0.5 bg-sky-100 text-sky-700 rounded-full font-bold text-xs mb-3 border border-sky-200";
+            }
 
             const wrongContainer = document.getElementById('resWrongContainer');
             const wrongList = document.getElementById('resWrongList');
@@ -714,7 +878,7 @@
                 roundWrongQuestions.forEach(item => {
                     const tag = document.createElement('span');
                     tag.className = "px-2 py-0.5 bg-rose-100 text-rose-700 rounded-lg border border-rose-300";
-                    tag.innerText = `${item.a} × ${item.b} = ${item.answer}`;
+                    tag.innerText = `${item.a} × ${item.b} = ${item.answer} ${item.wrongInput === '逾時' ? '(逾時)' : ''}`;
                     wrongList.appendChild(tag);
                 });
             } else {
@@ -725,7 +889,7 @@
 
             saveRoundToStorage({
                 date: new Date().toLocaleDateString('zh-TW', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
-                tablesStr: selectedTables.join(', ') + ' 段',
+                tablesStr: (isChallengeMode ? `⏱️${secondsPerQuestion}秒 | ` : '') + selectedTables.join(', ') + ' 段',
                 total: totalQuestionsPerRound,
                 correct: scoreCorrect,
                 errorRate: errorRate,
@@ -738,7 +902,7 @@
             document.getElementById('resultModal').classList.add('hidden');
         }
 
-        /* 本地 LocalStorage 學習日記處理 */
+        /* 本地 LocalStorage 日記處理 */
         const STORAGE_KEY = 'kids_99_park_logs_v1';
 
         function getStoredLogs() {
@@ -829,7 +993,29 @@
             loadHistoryAndRenderDiary();
         }
 
-        /* 背景音樂 (自動優先播放 bgm.mp3；無檔時切換為合成音) */
+        /* 音效與背景音樂處理 */
+        function openVolumeModal() {
+            document.getElementById('volumeModal').classList.remove('hidden');
+        }
+
+        function closeVolumeModal() {
+            document.getElementById('volumeModal').classList.add('hidden');
+        }
+
+        function changeBgmVolume(val) {
+            bgmVolume = parseFloat(val);
+            document.getElementById('bgmVolText').innerText = Math.round(bgmVolume * 100) + '%';
+            const bgmAudio = document.getElementById('bgmAudio');
+            if (bgmAudio) {
+                bgmAudio.volume = bgmVolume;
+            }
+        }
+
+        function changeSfxVolume(val) {
+            sfxVolume = parseFloat(val);
+            document.getElementById('sfxVolText').innerText = Math.round(sfxVolume * 100) + '%';
+        }
+
         function initAudioContext() {
             if (!audioCtx) {
                 const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
@@ -913,13 +1099,12 @@
                 bgmIcon.className = "fas fa-volume-up animate-pulse";
                 bgmText.innerText = "音樂: 開";
 
-                bgmAudio.volume = bgmVolume; // 設定目前滑桿指定之音量
+                bgmAudio.volume = bgmVolume;
 
-                // 嘗試播放本地 bgm.mp3 檔案
                 bgmAudio.play().then(() => {
-                    // MP3 播放成功
+                    // MP3 檔案成功播放
                 }).catch(() => {
-                    // 若無 bgm.mp3 檔案或載入失敗，啟動內建合成樂園背景音樂
+                    // 若無 bgm.mp3 檔案，啟動備用合成音效
                     playBGMStep();
                 });
             } else {
@@ -958,6 +1143,91 @@
         function alertModal(msg) {
             const petMsg = document.getElementById('tipText');
             if (petMsg) petMsg.innerText = msg;
+        }
+
+        /* 乘法表對照 Modal 邏輯 */
+        let currentChartMode = 'selected';
+
+        function openTableChartModal() {
+            currentChartMode = 'selected';
+            renderTableChart();
+            document.getElementById('tableChartModal').classList.remove('hidden');
+        }
+
+        function closeTableChartModal() {
+            document.getElementById('tableChartModal').classList.add('hidden');
+        }
+
+        function switchChartTab(mode) {
+            currentChartMode = mode;
+            renderTableChart();
+        }
+
+        function renderTableChart() {
+            const tabSelectedBtn = document.getElementById('chartTabSelected');
+            const tabAllBtn = document.getElementById('chartTabAll');
+            const gridContainer = document.getElementById('chartGridContainer');
+            const subTabs = document.getElementById('chartSubTabs');
+
+            if (!gridContainer) return;
+
+            if (currentChartMode === 'selected') {
+                tabSelectedBtn.className = "px-2.5 py-1.5 rounded-xl font-extrabold transition bg-amber-500 text-white shadow-sm";
+                tabAllBtn.className = "px-2.5 py-1.5 rounded-xl font-extrabold transition bg-gray-200 text-gray-700 hover:bg-gray-300";
+            } else if (currentChartMode === 'all') {
+                tabSelectedBtn.className = "px-2.5 py-1.5 rounded-xl font-extrabold transition bg-gray-200 text-gray-700 hover:bg-gray-300";
+                tabAllBtn.className = "px-2.5 py-1.5 rounded-xl font-extrabold transition bg-amber-500 text-white shadow-sm";
+            } else {
+                tabSelectedBtn.className = "px-2.5 py-1.5 rounded-xl font-extrabold transition bg-gray-200 text-gray-700 hover:bg-gray-300";
+                tabAllBtn.className = "px-2.5 py-1.5 rounded-xl font-extrabold transition bg-gray-200 text-gray-700 hover:bg-gray-300";
+            }
+
+            subTabs.innerHTML = "";
+            for (let i = 2; i <= 9; i++) {
+                const isCurrentNum = (currentChartMode === i);
+                const btn = document.createElement('button');
+                btn.className = `px-2 py-0.5 rounded-lg font-bold transition ${isCurrentNum ? 'bg-indigo-600 text-white' : 'bg-amber-100 text-amber-900 hover:bg-amber-200'}`;
+                btn.innerText = `${i}段`;
+                btn.onclick = () => switchChartTab(i);
+                subTabs.appendChild(btn);
+            }
+
+            let tablesToDisplay = [];
+            if (currentChartMode === 'selected') {
+                tablesToDisplay = selectedTables.length > 0 ? [...selectedTables] : [2,3,4,5,6,7,8,9];
+            } else if (currentChartMode === 'all') {
+                tablesToDisplay = [2, 3, 4, 5, 6, 7, 8, 9];
+            } else if (typeof currentChartMode === 'number') {
+                tablesToDisplay = [currentChartMode];
+            }
+
+            gridContainer.innerHTML = "";
+            tablesToDisplay.forEach((num) => {
+                const card = document.createElement('div');
+                card.className = `rounded-2xl border-2 p-2.5 shadow-sm bg-white flex flex-col items-center border-amber-300`;
+                
+                let rowsHtml = '';
+                for (let j = 1; j <= 9; j++) {
+                    const ans = num * j;
+                    const isCurrentQuestionTarget = (num === numA && j === numB);
+                    rowsHtml += `
+                        <div class="flex justify-between w-full py-0.5 px-1.5 rounded ${isCurrentQuestionTarget ? 'bg-yellow-300 font-black text-amber-950 shadow-sm' : 'hover:bg-amber-50'} text-xs">
+                            <span>${num} × ${j}</span>
+                            <span class="font-extrabold">= ${ans}</span>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="w-full text-center py-1 font-black text-amber-900 bg-amber-100 rounded-xl mb-1.5 text-xs border border-amber-200">
+                        ${num} 的乘法表
+                    </div>
+                    <div class="w-full space-y-0.5">
+                        ${rowsHtml}
+                    </div>
+                `;
+                gridContainer.appendChild(card);
+            });
         }
     </script>
 </body>
